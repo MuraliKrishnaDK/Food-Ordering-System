@@ -1,5 +1,10 @@
 {
   "buildCommand": "cd xwiggy-app && npm install --legacy-peer-deps && npm run build -- --prod",
   "outputDirectory": "xwiggy-app/dist/xwiggy-app",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "build": {
+    "env": {
+      "NODE_VERSION": "16"
+    }
+  }
 }
