@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -7,8 +8,8 @@ import {HttpClient} from "@angular/common/http";
 export class MenuServiceService {
 
   constructor(public HttpClient: HttpClient) { }
-  public getItems():any{
-    let url = "http://localhost:8080/menu";
-    return this.HttpClient.get(url);
+
+  public getItems(): any {
+    return this.HttpClient.get(`${environment.apiUrl}/menu`);
   }
 }

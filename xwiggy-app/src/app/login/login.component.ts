@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Router} from "@angular/router";
-import {AppComponent, User} from "../app.component";
+import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
+import { AppComponent, User } from "../app.component";
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -32,7 +33,7 @@ export class LoginComponent implements OnInit {
   }
 
   sendFeedback(): void {
-    let url = "http://localhost:8080/login";
+    let url = `${environment.apiUrl}/login`;
     let key='userData';
     this.http.post<User>(url,this.model).subscribe(
       res => {

@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { MenuServiceService } from "../menu-service.service";
 import { DomSanitizer } from '@angular/platform-browser';
 import { CartService } from "../cart.service";
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-merchant-menu',
@@ -49,7 +50,7 @@ export class MerchantMenuComponent implements OnInit {
   }
 
   getTotal():void{
-    let url = "http://localhost:8080/addToCart";
+    let url = `${environment.apiUrl}/addToCart`;
     this.modalCart.quantity1=this.values[0].quantity;
     this.modalCart.quantity2=this.values[1].quantity;
     this.modalCart.quantity3=this.values[2].quantity;

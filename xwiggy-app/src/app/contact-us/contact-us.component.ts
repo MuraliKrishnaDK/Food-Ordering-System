@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { User } from "../app.component";
 import { HttpClient } from "@angular/common/http";
 import { CartService } from "../cart.service";
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-contact-us',
@@ -46,7 +47,7 @@ export class ContactUsComponent implements OnInit {
     this.modelMessage.name=this.modelUser.firstname+this.modelUser.lastname;
     this.modelMessage.email=this.modelUser.email;
 
-    let url = "http://localhost:8080/contact";
+    let url = `${environment.apiUrl}/contact`;
     this.http.post <contact>(url,this.modelMessage).subscribe(
       res => {
         ContactUsComponent.changeLoading();

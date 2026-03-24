@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { CartService } from "../cart.service";
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-add-item',
@@ -36,11 +37,11 @@ export class AddItemComponent implements OnInit {
     if(formData.get('file')==null || formData.get('file')==undefined)
     {
       console.log(formData.get('file'));
-      this.url="http://localhost:8080/addNewItem";
+      this.url=`${environment.apiUrl}/addNewItem`;
     }
     else
     {
-      this.url="http://localhost:8080/addNewItemUrl";
+      this.url=`${environment.apiUrl}/addNewItemUrl`;
     }
     this.http.post(this.url, formData)
       .subscribe(
@@ -63,7 +64,7 @@ export class AddItemComponent implements OnInit {
   present:boolean=null;
 
   checkAvailability() {
-    this.http.post<boolean>("http://localhost:8080/checkItemId",this.newFoodItems.id).subscribe(
+    this.http.post<boolean>(`${environment.apiUrl}/checkItemId`, this.newFoodItems.id).subscribe(
       res=>{
         this.present=res;
       },err=>{

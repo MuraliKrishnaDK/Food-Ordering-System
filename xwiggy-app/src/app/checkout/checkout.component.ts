@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {AppComponent, User} from "../app.component";
-import {HttpClient} from "@angular/common/http";
-import {Router} from "@angular/router";
+import { AppComponent, User } from "../app.component";
+import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
 import { CartService } from "../cart.service";
+import { environment } from '../../environments/environment';
 
 interface CartItemMeta {
   name: string;
@@ -176,7 +177,7 @@ export class CheckoutComponent implements OnInit {
 
   changeDB():void{
     if(this.cardNumberVal&&this.monthVal&&this.yearVal&&this.cvvVal&&this.nameOnCardVal) {
-      let url = "http://localhost:8080/changeDB";
+      let url = `${environment.apiUrl}/changeDB`;
       this.http.get(url).subscribe(
         res => {
           console.log("DB Updated");

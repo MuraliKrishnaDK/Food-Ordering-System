@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {AppComponent, User} from "../app.component";
-import {HttpClient} from "@angular/common/http";
-import {Router} from "@angular/router";
+import { AppComponent, User } from "../app.component";
+import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -35,7 +36,7 @@ export class RegisterComponent implements OnInit {
 
   usernamePresent():void{
     this.fontColor='';
-    let url = "http://localhost:8080/checkUserName";
+    let url = `${environment.apiUrl}/checkUserName`;
 
 
 
@@ -118,7 +119,7 @@ export class RegisterComponent implements OnInit {
   registerUser():void{
     this.updateSelect();
 
-    let url = "http://localhost:8080/register";
+    let url = `${environment.apiUrl}/register`;
     this.http.post<User>(url,this.model).subscribe(
       res=>{
         AppComponent.modelUser =res;
