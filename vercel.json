@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd xwiggy-app && npm install && npm run build -- --prod",
+  "buildCommand": "cd xwiggy-app && npm install --legacy-peer-deps && npm run build -- --prod",
   "outputDirectory": "xwiggy-app/dist/xwiggy-app",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
