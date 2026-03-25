@@ -1,6 +1,6 @@
 # FoodDoor — Online Food Ordering System
 
-A full-stack web application that allows customers to browse a food menu, manage a cart, and place orders — while also providing a merchant-facing portal for restaurant owners to manage their menu items. Built with **Angular 8** on the frontend and **Spring Boot 2** on the backend, backed by a **MySQL** database.
+A full-stack web application that allows customers to browse a food menu, manage a cart, and place orders — while also providing a merchant-facing portal for restaurant owners to manage their menu items. Built with **Angular 8** on the frontend and **Spring Boot 2** on the backend, backed by a **PostgreSQL** database.
 
 ---
 
@@ -43,7 +43,7 @@ A full-stack web application that allows customers to browse a food menu, manage
 |------------|-----------------------------------------|
 | Frontend   | Angular 8, TypeScript, Bootstrap 4, Font Awesome |
 | Backend    | Spring Boot 2.1.6, Spring Data JPA, Hibernate |
-| Database   | MySQL 5+                                |
+| Database   | PostgreSQL 13+                          |
 | Security   | AES Encryption (custom `StrongAES` utility) |
 | Build Tool | Maven (backend), Angular CLI (frontend) |
 
@@ -52,9 +52,9 @@ A full-stack web application that allows customers to browse a food menu, manage
 ## Project Structure
 
 ```
-Online Food Ordering System/
+Food Ordering System/
 ├── database sql file/
-│   └── myusers.sql              # MySQL dump to bootstrap the database
+│   └── myusers.sql              # PostgreSQL script to bootstrap the database
 ├── xwiggy-app/                  # Angular 8 frontend
 │   └── src/
 │       └── app/
@@ -82,30 +82,31 @@ Online Food Ordering System/
 
 ## Prerequisites
 
-- **Java 11** (or Java 8+)
+- **Java 11** (or Java 17+)
 - **Maven 3.6+**
 - **Node.js 16+** and **npm 8+**
 - **Angular CLI 8** — `npm install -g @angular/cli@8`
-- **MySQL 5.7+**
+- **PostgreSQL 13+**
 
 ---
 
 ## Database Setup
 
-1. Create a MySQL database named `myusers`:
+1. Create a PostgreSQL database named `myusers`:
    ```sql
    CREATE DATABASE myusers;
    ```
 
-2. Import the provided SQL dump:
+2. Import the provided SQL script:
    ```bash
-   mysql -u root -p myusers < "database sql file/myusers.sql"
+   psql -U postgres -d myusers -f "database sql file/myusers.sql"
    ```
 
 3. The script creates and seeds the following tables:
-   - `user` — registered users (customers & merchants)
+   - `app_user` — registered users (customers & merchants)
    - `food` — menu items with name, price, image, and category
-   - `cart` / `cart0_` — cart and order data
+   - `cart` — cart and order data
+   - `contact` — contact/support messages
 
 ---
 
@@ -118,14 +119,14 @@ Online Food Ordering System/
 
 2. Update database credentials in `src/main/resources/application.properties` if needed:
    ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/myusers?useSSL=false&serverTimezone=UTC
-   spring.datasource.username=root
+   spring.datasource.url=jdbc:postgresql://localhost:5432/myusers
+   spring.datasource.username=postgres
    spring.datasource.password=
    ```
 
 3. Build and run:
    ```bash
-   mvn spring-boot:run
+   ./mvnw spring-boot:run
    ```
 
 The backend starts on **http://localhost:8080**.
@@ -167,4 +168,3 @@ The Angular app is served at **http://localhost:4200**.
 | POST   | `/addNewItemUrl`  | Add new food item with image URL         |
 | POST   | `/checkItemId`    | Check if a food item ID is already taken |
 | GET    | `/changeDB`       | Rotate/update database records           |
-
