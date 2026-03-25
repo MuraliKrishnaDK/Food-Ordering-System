@@ -1,5 +1,6 @@
 package com.xwiggy.food.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -12,7 +13,9 @@ public class Food {
     private int price;
     private int quantity;
     private String url;
+    @Column(name = "formid")
     private String formID;
+    @Column(name = "cartid")
     private String cartID;
 
     public Food(){}
