@@ -168,8 +168,3 @@ The Angular app is served at **http://localhost:4200**.
 | POST   | `/checkItemId`    | Check if a food item ID is already taken |
 | GET    | `/changeDB`       | Rotate/update database records           |
 
----
-
-## Screenshots
-
-> _Screenshots can be added here once the app is running._
