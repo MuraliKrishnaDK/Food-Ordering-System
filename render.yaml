@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: food-ordering-system
+    runtime: docker
+    dockerfilePath: ./xwiggy-back/Dockerfile
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
