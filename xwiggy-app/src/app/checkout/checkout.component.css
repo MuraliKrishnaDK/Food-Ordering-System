@@ -263,7 +263,125 @@ input[type=number], select {
 .red{
    border: 2px solid red;
    border-radius: 4px;
- }
+}
+
+/* ── Payment form fields ── */
+.pay-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.pay-field label {
+  color: #ffd166;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  float: none;
+  padding: 0;
+}
+
+.pay-field input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #f0f0f0;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.pay-field input:focus {
+  border-color: #f4a422;
+}
+
+.input-valid {
+  border-color: #66bb6a !important;
+  background: rgba(102,187,106,0.07) !important;
+}
+
+.input-invalid {
+  border-color: #ef5350 !important;
+  background: rgba(239,83,80,0.07) !important;
+}
+
+.field-hint {
+  font-size: 0.78rem;
+  color: #ef9a9a;
+  margin-top: 4px;
+}
+
+.valid-hint {
+  color: #81c784 !important;
+}
+
+.cvv-hint {
+  font-size: 0.75rem;
+  color: #aaaaaa;
+  font-weight: 400;
+}
+
+/* Expiry side-by-side */
+.expiry-row {
+  flex-direction: row;
+  gap: 14px;
+}
+
+.expiry-item {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.expiry-item label {
+  color: #ffd166;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+  float: none;
+  padding: 0;
+}
+
+.expiry-item input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #f0f0f0;
+  font-size: 0.95rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  margin: 0;
+}
+
+.expiry-item input:focus { border-color: #f4a422; }
+
+/* Validation summary box */
+.validation-summary {
+  background: rgba(239,83,80,0.12);
+  border: 1px solid rgba(239,83,80,0.4);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+}
+
+.validation-summary ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.validation-summary li {
+  color: #ef9a9a;
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
 
 @media (max-width: 980px) {
   .checkout-layout {

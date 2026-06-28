@@ -30,47 +30,79 @@
     <section class="payment-panel">
       <h2 class="payment-title">Payment Details</h2>
       <div class="payment-form-wrap">
-        <table class="payment-table">
-          <tr>
-            <td><label>Card Number</label></td>
-            <td><input type="text" placeholder="xxxx xxxx xxxx xxxx"
-                        minlength="16"
-                        maxlength="16"
-                        [(ngModel)]="cardNumber"
-                        required="required"
-                        (keyup)="validCard()">
-            </td>
-          </tr>
-          <tr>
-            <td><label>Expiry</label></td>
-            <td>
-              <table>
-                <tr>
-                  <td style="min-width: 90px"><input type="number" placeholder="MM" min="1" max="12" required="required" [(ngModel)]="month" (keyup)="validMonth()"></td>
-                  <td style="min-width: 90px"><input type="number" placeholder="YY" min="19" max="99" required="required" [(ngModel)]="year" (keyup)="validYear()"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td><label>CVV</label></td>
-            <td>
-              <table>
-                <tr>
-                  <td style="min-width: 90px"><input type="number" placeholder="CVV" min="100" max="999" required="required" [(ngModel)]="cvv" (keyup)="validCvv()"></td>
-                  <td><img class="question" src="http://pngimg.com/uploads/question_mark/question_mark_PNG49.png"
-                           data-toggle="tooltip" data-placement="right" title="Card CVV Help"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td><label>Cardholder Name</label></td>
-            <td><input type="text" placeholder="Name" required="required" minlength="4" maxlength="10" [(ngModel)]="nameOnCard" (keyup)="validName()"></td>
-          </tr>
-        </table>
+
+        <!-- Validation error summary -->
+        <div *ngIf="validationErrors.length > 0" class="validation-summary">
+          <ul>
+            <li *ngFor="let err of validationErrors">{{ err }}</li>
+          </ul>
+        </div>
+
+        <div class="pay-field">
+          <label>Card Number</label>
+          <input type="text" placeholder="e.g. 4111 1111 1111 1111"
+                 maxlength="19"
+                 [(ngModel)]="cardNumber"
+                 (input)="validCard()"
+                 [class.input-valid]="cardNumberVal === true"
+                 [class.input-invalid]="cardNumberVal === false">
+          <span class="field-hint" *ngIf="cardNumberVal === false">
+            Invalid card number. Please check and re-enter.
+          </span>
+          <span class="field-hint valid-hint" *ngIf="cardNumberVal === true">
+            ✓ Card number looks valid.
+          </span>
+        </div>
+
+        <div class="pay-field expiry-row">
+          <div class="expiry-item">
+            <label>Month (MM)</label>
+            <input type="number" placeholder="MM" min="1" max="12"
+                   [(ngModel)]="month"
+                   (input)="validMonth()"
+                   [class.input-valid]="monthVal === true"
+                   [class.input-invalid]="monthVal === false">
+            <span class="field-hint" *ngIf="monthVal === false">Invalid month.</span>
+          </div>
+          <div class="expiry-item">
+            <label>Year (YY)</label>
+            <input type="number" placeholder="YY" min="0" max="99"
+                   [(ngModel)]="year"
+                   (input)="validYear()"
+                   [class.input-valid]="yearVal === true"
+                   [class.input-invalid]="yearVal === false">
+            <span class="field-hint" *ngIf="yearVal === false">Invalid or past year.</span>
+          </div>
+        </div>
+
+        <div class="pay-field">
+          <label>CVV <span class="cvv-hint">(3 or 4 digits on back of card)</span></label>
+          <input type="password" placeholder="CVV" maxlength="4"
+                 [(ngModel)]="cvv"
+                 (input)="validCvv()"
+                 [class.input-valid]="cvvVal === true"
+                 [class.input-invalid]="cvvVal === false">
+          <span class="field-hint" *ngIf="cvvVal === false">CVV must be 3 or 4 digits.</span>
+        </div>
+
+        <div class="pay-field">
+          <label>Cardholder Name</label>
+          <input type="text" placeholder="Name as on card" maxlength="26"
+                 [(ngModel)]="nameOnCard"
+                 (input)="validName()"
+                 [class.input-valid]="nameOnCardVal === true"
+                 [class.input-invalid]="nameOnCardVal === false">
+          <span class="field-hint" *ngIf="nameOnCardVal === false">
+            Letters only, 2–26 characters.
+          </span>
+        </div>
+
         <div class="payment-actions">
-          <button class="bigbutton pay-btn" routerLink="/success" (click)="changeDB()"><span>Pay</span></button>
+          <button class="bigbutton pay-btn"
+                  [routerLink]="(cardNumberVal && monthVal && yearVal && cvvVal && nameOnCardVal) ? ['/success'] : null"
+                  (click)="changeDB()">
+            <span>Pay ${{ grandTotal.toFixed(2) }}</span>
+          </button>
         </div>
       </div>
     </section>
