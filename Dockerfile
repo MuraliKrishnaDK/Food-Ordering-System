@@ -2,7 +2,7 @@
 FROM node:16-alpine AS angular-build
 WORKDIR /workspace/xwiggy-app
 COPY xwiggy-app/package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY xwiggy-app/ ./
 RUN npm run build -- --prod
 
