@@ -26,7 +26,7 @@ interface CartItemMeta {
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
-  private readonly fallbackImageUrl = 'https://loremflickr.com/640/420/indian-food,meal?lock=999999';
+  private readonly fallbackImageUrl = 'https://source.unsplash.com/640x420/?indian+food,meal';
   categories: MenuCategory[] = [
     {
       name: 'Appetizers Veg',
@@ -96,147 +96,147 @@ export class MenuComponent implements OnInit {
       name: 'Tiffins/Dosas',
       emoji: '🫓',
       items: [
-        { name: 'Idly (3 pcs)', priceText: '$7.99', basePrice: 7.99 },
-        { name: 'Vada (2 pcs)', priceText: '$7.99', basePrice: 7.99 },
-        { name: 'Upma', priceText: '$7.99', basePrice: 7.99 },
-        { name: 'Pongal', priceText: '$7.99', basePrice: 7.99 },
-        { name: 'Ghee Karam Idly (3 pcs)', priceText: '$8.99', basePrice: 8.99 },
-        { name: 'Sambar Idly (2 pcs)', priceText: '$8.99', basePrice: 8.99 },
-        { name: 'Sambar Vada (2 pcs)', priceText: '$8.99', basePrice: 8.99 },
-        { name: 'Mysore Bonda (3 pcs)', priceText: '$8.99', basePrice: 8.99 },
-        { name: 'Plain Dosa', priceText: '$8.99', basePrice: 8.99 },
-        { name: 'Masala Dosa', priceText: '$10.99', basePrice: 10.99 },
-        { name: 'Mysore Masala Dosa', priceText: '$10.99', basePrice: 10.99 },
-        { name: 'Onion Dosa', priceText: '$10.99', basePrice: 10.99 },
-        { name: 'Podi Karam Dosa', priceText: '$10.99', basePrice: 10.99 },
-        { name: 'Guntur Karam Dosa', priceText: '$10.99', basePrice: 10.99 },
-        { name: 'Annam Cheese Dosa', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Nutella Dosa', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Paneer Dosa', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Ghee Karam Dosa', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Gongura Onion Dosa', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Egg Dosa', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Chicken 65 Dosa', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Chicken Keema Dosa', priceText: '$12.99', basePrice: 12.99 }
+        { name: 'Idly (3 pcs)',            priceText: '$7.99',  basePrice: 7.99,  imageUrl: 'https://source.unsplash.com/640x420/?idli,indian+food' },
+        { name: 'Vada (2 pcs)',            priceText: '$7.99',  basePrice: 7.99,  imageUrl: 'https://source.unsplash.com/640x420/?medu+vada,south+indian' },
+        { name: 'Upma',                    priceText: '$7.99',  basePrice: 7.99,  imageUrl: 'https://source.unsplash.com/640x420/?upma,semolina' },
+        { name: 'Pongal',                  priceText: '$7.99',  basePrice: 7.99,  imageUrl: 'https://source.unsplash.com/640x420/?pongal,indian+rice' },
+        { name: 'Ghee Karam Idly (3 pcs)', priceText: '$8.99',  basePrice: 8.99,  imageUrl: 'https://source.unsplash.com/640x420/?idli,south+indian+food' },
+        { name: 'Sambar Idly (2 pcs)',     priceText: '$8.99',  basePrice: 8.99,  imageUrl: 'https://source.unsplash.com/640x420/?idli+sambar' },
+        { name: 'Sambar Vada (2 pcs)',     priceText: '$8.99',  basePrice: 8.99,  imageUrl: 'https://source.unsplash.com/640x420/?vada+sambar,south+indian' },
+        { name: 'Mysore Bonda (3 pcs)',    priceText: '$8.99',  basePrice: 8.99,  imageUrl: 'https://source.unsplash.com/640x420/?bonda,fried+snack' },
+        { name: 'Plain Dosa',              priceText: '$8.99',  basePrice: 8.99,  imageUrl: 'https://source.unsplash.com/640x420/?dosa,south+indian' },
+        { name: 'Masala Dosa',             priceText: '$10.99', basePrice: 10.99, imageUrl: 'https://source.unsplash.com/640x420/?masala+dosa' },
+        { name: 'Mysore Masala Dosa',      priceText: '$10.99', basePrice: 10.99, imageUrl: 'https://source.unsplash.com/640x420/?mysore+dosa,dosa' },
+        { name: 'Onion Dosa',              priceText: '$10.99', basePrice: 10.99, imageUrl: 'https://source.unsplash.com/640x420/?dosa,crispy' },
+        { name: 'Podi Karam Dosa',         priceText: '$10.99', basePrice: 10.99, imageUrl: 'https://source.unsplash.com/640x420/?dosa,spicy' },
+        { name: 'Guntur Karam Dosa',       priceText: '$10.99', basePrice: 10.99, imageUrl: 'https://source.unsplash.com/640x420/?dosa,andhra' },
+        { name: 'Annam Cheese Dosa',       priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?cheese+dosa' },
+        { name: 'Nutella Dosa',            priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?nutella+crepe,dosa' },
+        { name: 'Paneer Dosa',             priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?paneer+dosa' },
+        { name: 'Ghee Karam Dosa',         priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?ghee+dosa,crispy' },
+        { name: 'Gongura Onion Dosa',      priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?dosa,south+indian+food' },
+        { name: 'Egg Dosa',                priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?egg+dosa,omelette' },
+        { name: 'Chicken 65 Dosa',         priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?chicken+dosa,fried+chicken' },
+        { name: 'Chicken Keema Dosa',      priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?keema,minced+chicken' }
       ]
     },
     {
       name: 'Veg Gravies',
       emoji: '🍛',
       items: [
-        { name: 'Yellow Dal Tadka', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Mix Vegetable Curry', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Kadai Veg Curry', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Navratan Korma Veg', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Chana Masala', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Palak Chana', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Aloo Gobi', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Gutti Vankaya Curry', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Bhindi Masala', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Malai Kofta', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Kaju Matar', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Navratan Korma', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Mushroom Masala', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Kaju Masala', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Kaju Capsicum Masala', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Achari Handi Masala', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Veg Kheema Masala', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Paneer Butter Masala', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Paneer Tikka Masala', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Palak Paneer', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Kadai Paneer', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Methi Paneer', priceText: '$14.99', basePrice: 14.99 }
+        { name: 'Yellow Dal Tadka',       priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?dal+tadka,lentil+curry' },
+        { name: 'Mix Vegetable Curry',    priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?vegetable+curry,indian' },
+        { name: 'Kadai Veg Curry',        priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?kadai+curry,vegetable' },
+        { name: 'Navratan Korma Veg',     priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?korma,indian+curry' },
+        { name: 'Chana Masala',           priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?chana+masala,chickpea' },
+        { name: 'Palak Chana',            priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?palak,spinach+curry' },
+        { name: 'Aloo Gobi',              priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?aloo+gobi,potato+cauliflower' },
+        { name: 'Gutti Vankaya Curry',    priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?eggplant+curry,brinjal' },
+        { name: 'Bhindi Masala',          priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?okra+curry,bhindi' },
+        { name: 'Malai Kofta',            priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?malai+kofta,cream+curry' },
+        { name: 'Kaju Matar',             priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?cashew+curry,peas' },
+        { name: 'Navratan Korma',         priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?navratan+korma,mixed+curry' },
+        { name: 'Mushroom Masala',        priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?mushroom+curry,mushroom' },
+        { name: 'Kaju Masala',            priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?cashew+masala,rich+curry' },
+        { name: 'Kaju Capsicum Masala',   priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?capsicum+curry,pepper' },
+        { name: 'Achari Handi Masala',    priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?achari,indian+curry' },
+        { name: 'Veg Kheema Masala',      priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?keema+masala,minced' },
+        { name: 'Paneer Butter Masala',   priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?paneer+butter+masala' },
+        { name: 'Paneer Tikka Masala',    priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?paneer+tikka+masala' },
+        { name: 'Palak Paneer',           priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?palak+paneer,spinach' },
+        { name: 'Kadai Paneer',           priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?kadai+paneer,cottage+cheese' },
+        { name: 'Methi Paneer',           priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?methi+paneer,fenugreek' }
       ]
     },
     {
       name: 'Mandi Specials',
       emoji: '🍗',
       items: [
-        { name: 'Paneer Juicy Mandi', priceText: '$23.99 / $41.99 / $61.99', basePrice: 23.99 },
-        { name: 'Veg Mandi', priceText: '$23.99 / $41.99', basePrice: 23.99 },
-        { name: 'Egg Mandi', priceText: '$21.99 / $41.99', basePrice: 21.99 },
-        { name: 'Chicken Fry Piece Mandi', priceText: '$21.99 / $41.99', basePrice: 21.99 },
-        { name: 'Juicy Chicken Mandi', priceText: '$23.99 / $45.99 / $67.99', basePrice: 23.99 },
-        { name: 'Spicy Chicken Mandi', priceText: '$23.99 / $45.99 / $67.99', basePrice: 23.99 },
-        { name: 'Afghani Chicken Mandi', priceText: '$23.99 / $45.99 / $67.99', basePrice: 23.99 },
-        { name: 'Ghee Roast Mutton Mandi', priceText: '$24.99 / $47.99', basePrice: 24.99 },
-        { name: 'Afghani Mutton Mandi', priceText: '$24.99 / $47.99', basePrice: 24.99 },
-        { name: 'Spicy Shrimp Mandi', priceText: '$24.99 / $47.99', basePrice: 24.99 }
+        { name: 'Paneer Juicy Mandi',       priceText: '$23.99 / $41.99 / $61.99', basePrice: 23.99, imageUrl: 'https://source.unsplash.com/640x420/?mandi,arabian+rice' },
+        { name: 'Veg Mandi',                priceText: '$23.99 / $41.99',          basePrice: 23.99, imageUrl: 'https://source.unsplash.com/640x420/?mandi,rice+platter' },
+        { name: 'Egg Mandi',                priceText: '$21.99 / $41.99',          basePrice: 21.99, imageUrl: 'https://source.unsplash.com/640x420/?mandi+rice,egg' },
+        { name: 'Chicken Fry Piece Mandi',  priceText: '$21.99 / $41.99',          basePrice: 21.99, imageUrl: 'https://source.unsplash.com/640x420/?chicken+mandi,fried+chicken' },
+        { name: 'Juicy Chicken Mandi',      priceText: '$23.99 / $45.99 / $67.99', basePrice: 23.99, imageUrl: 'https://source.unsplash.com/640x420/?mandi+chicken,roast+chicken' },
+        { name: 'Spicy Chicken Mandi',      priceText: '$23.99 / $45.99 / $67.99', basePrice: 23.99, imageUrl: 'https://source.unsplash.com/640x420/?spicy+chicken,mandi' },
+        { name: 'Afghani Chicken Mandi',    priceText: '$23.99 / $45.99 / $67.99', basePrice: 23.99, imageUrl: 'https://source.unsplash.com/640x420/?afghani+chicken,kebab' },
+        { name: 'Ghee Roast Mutton Mandi',  priceText: '$24.99 / $47.99',          basePrice: 24.99, imageUrl: 'https://source.unsplash.com/640x420/?mutton+roast,ghee' },
+        { name: 'Afghani Mutton Mandi',     priceText: '$24.99 / $47.99',          basePrice: 24.99, imageUrl: 'https://source.unsplash.com/640x420/?mutton+mandi,lamb' },
+        { name: 'Spicy Shrimp Mandi',       priceText: '$24.99 / $47.99',          basePrice: 24.99, imageUrl: 'https://source.unsplash.com/640x420/?shrimp+curry,prawn' }
       ]
     },
     {
       name: 'Dum Biryani',
       emoji: '🍚',
       items: [
-        { name: 'Veg Biryani', priceText: '$14.99 / $29.99', basePrice: 14.99 },
-        { name: 'Gongura Veg Biryani', priceText: '$15.99 / $31.99', basePrice: 15.99 },
-        { name: 'Ulavacharu Biryani', priceText: '$16.99 / $33.99', basePrice: 16.99 },
-        { name: 'Chicken Dum Biryani', priceText: '$15.99 / $29.99', basePrice: 15.99 },
-        { name: 'Gongura Chicken Dum', priceText: '$16.99 / $31.99', basePrice: 16.99 },
-        { name: 'Ulavacharu Chicken Dum', priceText: '$16.99 / $33.99', basePrice: 16.99 },
-        { name: 'Avakai Dum', priceText: '$16.99 / $33.99', basePrice: 16.99 },
-        { name: 'Goat Dum', priceText: '$17.99 / $33.99', basePrice: 17.99 },
-        { name: 'Gongura Goat Dum', priceText: '$18.99 / $39.99', basePrice: 18.99 }
+        { name: 'Veg Biryani',           priceText: '$14.99 / $29.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?veg+biryani,vegetable+rice' },
+        { name: 'Gongura Veg Biryani',   priceText: '$15.99 / $31.99', basePrice: 15.99, imageUrl: 'https://source.unsplash.com/640x420/?biryani,spiced+rice' },
+        { name: 'Ulavacharu Biryani',    priceText: '$16.99 / $33.99', basePrice: 16.99, imageUrl: 'https://source.unsplash.com/640x420/?biryani,andhra' },
+        { name: 'Chicken Dum Biryani',   priceText: '$15.99 / $29.99', basePrice: 15.99, imageUrl: 'https://source.unsplash.com/640x420/?chicken+biryani' },
+        { name: 'Gongura Chicken Dum',   priceText: '$16.99 / $31.99', basePrice: 16.99, imageUrl: 'https://source.unsplash.com/640x420/?chicken+biryani,spicy' },
+        { name: 'Ulavacharu Chicken Dum',priceText: '$16.99 / $33.99', basePrice: 16.99, imageUrl: 'https://source.unsplash.com/640x420/?dum+biryani,chicken' },
+        { name: 'Avakai Dum',            priceText: '$16.99 / $33.99', basePrice: 16.99, imageUrl: 'https://source.unsplash.com/640x420/?biryani,pickle+rice' },
+        { name: 'Goat Dum',              priceText: '$17.99 / $33.99', basePrice: 17.99, imageUrl: 'https://source.unsplash.com/640x420/?mutton+biryani,goat' },
+        { name: 'Gongura Goat Dum',      priceText: '$18.99 / $39.99', basePrice: 18.99, imageUrl: 'https://source.unsplash.com/640x420/?mutton+biryani,hyderabadi' }
       ]
     },
     {
       name: 'Non Veg Gravies',
       emoji: '🍗',
       items: [
-        { name: 'Egg Masala', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Egg Burji Dhaba Style', priceText: '$12.99', basePrice: 12.99 },
-        { name: 'Butter Chicken', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Chicken Tikka Masala', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Chowrasta Special Chicken', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Andhra Chicken Curry', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Dhaba Style Chicken', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Malai Methi Chicken', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Chicken Vindaloo', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Chettinad Chicken Curry', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Palak Chicken Curry', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Kadai Chicken', priceText: '$13.99', basePrice: 13.99 },
-        { name: 'Mughlai Chicken Curry', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Gongura Chicken Curry', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Kadhai Chicken', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Achari Chicken', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Chicken Kheema Curry', priceText: '$14.99', basePrice: 14.99 },
-        { name: 'Chowrasta Special Goat', priceText: '$15.99', basePrice: 15.99 },
-        { name: 'Andhra Goat', priceText: '$15.99', basePrice: 15.99 },
-        { name: 'Dhaba Style Goat', priceText: '$15.99', basePrice: 15.99 },
-        { name: 'Goat Vindaloo', priceText: '$15.99', basePrice: 15.99 },
-        { name: 'Chettinad Goat Curry', priceText: '$15.99', basePrice: 15.99 },
-        { name: 'Palak Goat Curry', priceText: '$15.99', basePrice: 15.99 }
+        { name: 'Egg Masala',              priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?egg+curry,egg+masala' },
+        { name: 'Egg Burji Dhaba Style',   priceText: '$12.99', basePrice: 12.99, imageUrl: 'https://source.unsplash.com/640x420/?scrambled+egg,dhaba' },
+        { name: 'Butter Chicken',          priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?butter+chicken,murgh+makhani' },
+        { name: 'Chicken Tikka Masala',    priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?chicken+tikka+masala' },
+        { name: 'Chowrasta Special Chicken',priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?chicken+curry,indian' },
+        { name: 'Andhra Chicken Curry',    priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?andhra+chicken,spicy+curry' },
+        { name: 'Dhaba Style Chicken',     priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?dhaba+chicken,roadside' },
+        { name: 'Malai Methi Chicken',     priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?cream+chicken,methi' },
+        { name: 'Chicken Vindaloo',        priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?vindaloo,goan+chicken' },
+        { name: 'Chettinad Chicken Curry', priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?chettinad+chicken,black+pepper' },
+        { name: 'Palak Chicken Curry',     priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?palak+chicken,spinach+chicken' },
+        { name: 'Kadai Chicken',           priceText: '$13.99', basePrice: 13.99, imageUrl: 'https://source.unsplash.com/640x420/?kadai+chicken,wok+chicken' },
+        { name: 'Mughlai Chicken Curry',   priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?mughlai+chicken,rich+curry' },
+        { name: 'Gongura Chicken Curry',   priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?chicken+curry,tangy' },
+        { name: 'Kadhai Chicken',          priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?chicken+masala,indian' },
+        { name: 'Achari Chicken',          priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?pickle+chicken,achari' },
+        { name: 'Chicken Kheema Curry',    priceText: '$14.99', basePrice: 14.99, imageUrl: 'https://source.unsplash.com/640x420/?keema+curry,minced+meat' },
+        { name: 'Chowrasta Special Goat',  priceText: '$15.99', basePrice: 15.99, imageUrl: 'https://source.unsplash.com/640x420/?mutton+curry,goat' },
+        { name: 'Andhra Goat',             priceText: '$15.99', basePrice: 15.99, imageUrl: 'https://source.unsplash.com/640x420/?andhra+mutton,goat+curry' },
+        { name: 'Dhaba Style Goat',        priceText: '$15.99', basePrice: 15.99, imageUrl: 'https://source.unsplash.com/640x420/?mutton,dhaba+style' },
+        { name: 'Goat Vindaloo',           priceText: '$15.99', basePrice: 15.99, imageUrl: 'https://source.unsplash.com/640x420/?vindaloo,goat+curry' },
+        { name: 'Chettinad Goat Curry',    priceText: '$15.99', basePrice: 15.99, imageUrl: 'https://source.unsplash.com/640x420/?chettinad,goat' },
+        { name: 'Palak Goat Curry',        priceText: '$15.99', basePrice: 15.99, imageUrl: 'https://source.unsplash.com/640x420/?spinach+mutton,palak' }
       ]
     },
     {
       name: 'Rice Specials',
       emoji: '🍛',
       items: [
-        { name: 'Jeera Rice', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Curd Rice', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Sambar Rice', priceText: '$11.99', basePrice: 11.99 },
-        { name: 'Pulav Rice', priceText: '$10.99', basePrice: 10.99 }
+        { name: 'Jeera Rice',  priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?jeera+rice,cumin+rice' },
+        { name: 'Curd Rice',   priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?curd+rice,yogurt+rice' },
+        { name: 'Sambar Rice', priceText: '$11.99', basePrice: 11.99, imageUrl: 'https://source.unsplash.com/640x420/?sambar+rice,south+indian' },
+        { name: 'Pulav Rice',  priceText: '$10.99', basePrice: 10.99, imageUrl: 'https://source.unsplash.com/640x420/?pulao,pilaf+rice' }
       ]
     },
     {
       name: 'Hot Beverages',
       emoji: '☕',
       items: [
-        { name: 'Irani Chai Large', priceText: '$2.99', basePrice: 2.99 },
-        { name: 'Irani Chai Small', priceText: '$1.50', basePrice: 1.50 },
-        { name: 'Masala Chai', priceText: '$2.00', basePrice: 2.00 }
+        { name: 'Irani Chai Large', priceText: '$2.99', basePrice: 2.99, imageUrl: 'https://source.unsplash.com/640x420/?irani+chai,hyderabadi+tea' },
+        { name: 'Irani Chai Small', priceText: '$1.50', basePrice: 1.50, imageUrl: 'https://source.unsplash.com/640x420/?chai,tea+glass' },
+        { name: 'Masala Chai',      priceText: '$2.00', basePrice: 2.00, imageUrl: 'https://source.unsplash.com/640x420/?masala+chai,spiced+tea' }
       ]
     },
     {
       name: 'Cold Beverages',
       emoji: '🧊',
       items: [
-        { name: 'Mango Lassi', priceText: '$5.99', basePrice: 5.99 },
-        { name: 'Milk Shakes (Choco/Strawberry Mix)', priceText: '$6.99', basePrice: 6.99 },
-        { name: 'Fresh Fruit Juice (Orange/Pineapple/Muskmelon)', priceText: '$6.99', basePrice: 6.99 },
-        { name: 'Oreo Shake', priceText: '$7.99', basePrice: 7.99 },
-        { name: 'Chocolate Shake', priceText: '$7.99', basePrice: 7.99 },
-        { name: 'Sugar Cane Juice', priceText: '$7.99', basePrice: 7.99 }
+        { name: 'Mango Lassi',                                    priceText: '$5.99', basePrice: 5.99, imageUrl: 'https://source.unsplash.com/640x420/?mango+lassi,mango+drink' },
+        { name: 'Milk Shakes (Choco/Strawberry Mix)',             priceText: '$6.99', basePrice: 6.99, imageUrl: 'https://source.unsplash.com/640x420/?milkshake,chocolate+shake' },
+        { name: 'Fresh Fruit Juice (Orange/Pineapple/Muskmelon)', priceText: '$6.99', basePrice: 6.99, imageUrl: 'https://source.unsplash.com/640x420/?fresh+juice,orange+juice' },
+        { name: 'Oreo Shake',                                     priceText: '$7.99', basePrice: 7.99, imageUrl: 'https://source.unsplash.com/640x420/?oreo+shake,cookies+cream' },
+        { name: 'Chocolate Shake',                                priceText: '$7.99', basePrice: 7.99, imageUrl: 'https://source.unsplash.com/640x420/?chocolate+milkshake' },
+        { name: 'Sugar Cane Juice',                               priceText: '$7.99', basePrice: 7.99, imageUrl: 'https://source.unsplash.com/640x420/?sugarcane+juice,fresh+juice' }
       ]
     }
   ];
@@ -465,9 +465,9 @@ export class MenuComponent implements OnInit {
     if (item.imageUrl && item.imageUrl.trim().length > 0) {
       return item.imageUrl;
     }
+    // Build keyword-based Unsplash Source URL as fallback for any item without a set imageUrl
     const tags = this.buildImageTags(item.name, categoryName);
-    const lock = this.getStableLock(`${categoryName || ''}-${item.name}`);
-    return `https://loremflickr.com/640/420/${tags}?lock=${lock}`;
+    return `https://source.unsplash.com/640x420/?${encodeURIComponent(tags)}`;
   }
 
   onItemImageError(event: Event): void {
