@@ -1,74 +1,74 @@
-<div class="body">
-  <br><br>
-  <h1 align="center">Menu</h1>
-  <br><br>
+<div class="body mm-page">
+  <h1 class="mm-title">Manage Menu</h1>
 
-<!--
-  <form name="form" #f="ngForm" (ngSubmit)="f.form.valid && getTotal()" novalidate class="feedback-form">
-    <table align="center">
-      <tr>
-        <td *ngFor="let m of model">
-          <div class="card" style="width: 18rem;">
-            <img class="card-img-top zoom" src="{{m.url}}" alt="Card image cap" style="height: 190px">
-            <div class="card-body">
-              <h5 class="card-title" style="color: black">{{m.item}}</h5>
-              <p class="card-text">Price : Rs.{{m.price}}</p>
-              <p> Quantity Available : {{m.quantity}}</p>
-            </div>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input class="input-group-text input-align" type="number" id="quantity1" name="quantity1" min="0" max="{{model[0].quantity}}" [(ngModel)]="modalCart.quantity1">
-        </td>
-        <td>
-          <input class="input-group-text input-align" type="number" id="quantity2" name="quantity2" min="0" max="{{model[1].quantity}}" [(ngModel)]="modalCart.quantity2">
-        </td>
-        <td>
-          <input class="input-group-text input-align" type="number" id="quantity3" name="quantity3" min="0" max="{{model[2].quantity}}" [(ngModel)]="modalCart.quantity3">
-        </td>
-      </tr>
-    </table>
-    <br><br>
-    <table align="center">
-      <tr>
-        <td>
-          <button class="bigbutton" routerLink="/addItem"><span>Add Item</span></button>
-        </td>
-        <td>
-          <button type="submit" class="bigbutton"><span>Update Quantity</span></button>
-        </td>
-        <td></td>
-      </tr>
-    </table>
-  </form>
-</div>
--->
+  <div *ngIf="successMessage" class="alert-msg success-msg">{{ successMessage }}</div>
+  <div *ngIf="errorMessage"   class="alert-msg error-msg">{{ errorMessage }}</div>
 
+  <div *ngIf="loading" class="mm-loading">Loading items…</div>
 
-<form name="form" #f="ngForm" (ngSubmit)="f.form.valid && getTotal()" novalidate class="feedback-form">
-  <div class="container-fluid" style="margin: 0 auto; width: 75%;">
-    <div class="row">
-      <div class="card-deck" *ngFor="let m of model; let index=index" style="padding-right: 3px">
-        <div class="card" style="width: 18rem;">
-          <!--<img class="card-img-top zoom" src="{{m.url}}" alt="{{m.item}}"  style="height: 190px">-->
-          <img class="card-img-top zoom" [src]="_DomSanitizationService.bypassSecurityTrustUrl(m.url)" style="height: 190px"/>
-          <div class="card-block">
-            <div class="card-body">
-              <h5 class="card-title" style="color: black">{{m.item}}</h5>
-              <p class="card-text">Price : Rs.{{m.price}}</p>
-              <p> Quantity Available : {{m.quantity}}</p>
-            </div>
+  <div *ngIf="!loading && model.length === 0" class="mm-empty">
+    No items yet. <a routerLink="/addItem">Add your first item.</a>
+  </div>
+
+  <div class="mm-grid" *ngIf="!loading && model.length > 0">
+    <div class="mm-card" *ngFor="let m of model">
+
+      <!-- ── VIEW MODE ── -->
+      <ng-container *ngIf="editingId !== m.id">
+        <img class="mm-img" [src]="sanitizer.bypassSecurityTrustUrl(m.url)" [alt]="m.item"
+             onerror="this.src='assets/menu-images/default.jpeg'" />
+        <div class="mm-info">
+          <h3 class="mm-item-name">{{ m.item }}</h3>
+          <p class="mm-meta">Price: <strong>${{ m.price }}</strong></p>
+          <p class="mm-meta">Qty Available: <strong>{{ m.quantity }}</strong></p>
+        </div>
+        <div class="mm-actions">
+          <button class="mm-btn edit-btn" (click)="startEdit(m)">✏ Edit</button>
+          <button class="mm-btn delete-btn" (click)="confirmDelete(m.id)">🗑 Delete</button>
+        </div>
+      </ng-container>
+
+      <!-- ── EDIT MODE ── -->
+      <ng-container *ngIf="editingId === m.id">
+        <div class="edit-form">
+          <label class="edit-lbl">Item Name</label>
+          <input class="edit-inp" type="text" [(ngModel)]="editForm.item" maxlength="45" />
+
+          <label class="edit-lbl">Price ($)</label>
+          <input class="edit-inp" type="number" [(ngModel)]="editForm.price" min="0" />
+
+          <label class="edit-lbl">Quantity Available</label>
+          <input class="edit-inp" type="number" [(ngModel)]="editForm.quantity" min="0" />
+
+          <label class="edit-lbl">Image URL</label>
+          <input class="edit-inp" type="text" [(ngModel)]="editForm.url" maxlength="120" />
+
+          <div class="edit-btns">
+            <button class="mm-btn save-btn" (click)="saveEdit(m)" [disabled]="saving">
+              {{ saving ? 'Saving…' : '✓ Save' }}
+            </button>
+            <button class="mm-btn cancel-btn" (click)="cancelEdit()" [disabled]="saving">✕ Cancel</button>
           </div>
         </div>
-        <input class="input-group-text input-align" type="number" name="name+{{index}}" min="0" max="{{model[index].quantity}}" value="{{values[index].quantity}}" [(ngModel)]="values[index].quantity">
+      </ng-container>
+
+      <!-- ── DELETE CONFIRM ── -->
+      <div class="delete-overlay" *ngIf="deleteConfirmId === m.id" (click)="cancelDelete()">
+        <div class="delete-dialog" (click)="$event.stopPropagation()">
+          <p>Delete <strong>{{ m.item }}</strong>? This cannot be undone.</p>
+          <div class="delete-dialog-btns">
+            <button class="mm-btn cancel-btn" (click)="cancelDelete()" [disabled]="deleting">Cancel</button>
+            <button class="mm-btn delete-btn" (click)="deleteItem(m)" [disabled]="deleting">
+              {{ deleting ? 'Deleting…' : 'Yes, Delete' }}
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
-  <br><br>
-  <div class="container" align="center">
-    <button class="bigbutton" routerLink="/addItem"><span>Add Item</span></button>
-    <button type="submit" class="bigbutton"><span>Update Quantity</span></button></div>
-</form>
+
+  <div class="mm-footer-actions">
+    <button class="bigbutton mm-add-btn" routerLink="/addItem"><span>+ Add New Item</span></button>
+  </div>
 </div>
