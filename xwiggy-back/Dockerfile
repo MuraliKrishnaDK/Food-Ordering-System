@@ -1,7 +1,7 @@
 FROM maven:3.8.8-eclipse-temurin-11 AS build
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
+COPY xwiggy-back/pom.xml .
+COPY xwiggy-back/src ./src
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:11-jre
