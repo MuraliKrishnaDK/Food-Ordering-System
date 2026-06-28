@@ -12,25 +12,16 @@ export class SuccessComponent implements OnInit {
   constructor(private router: Router, private cartService: CartService) { }
 
   ngOnInit() {
-    if (sessionStorage.getItem('userData') == null) {
+    if (sessionStorage.getItem("userData") == null) {
       this.router.navigate(['login']);
-      return;
     }
-    if (sessionStorage.getItem('total') == null) {
-      this.router.navigate(['menu']);
-      return;
-    }
-    // Clear cart data; keep userData so the user stays logged in
+    if (sessionStorage.getItem("total") == null)
+      this.router.navigate(["menu"]);
     this.cartService.clearCart();
-    sessionStorage.removeItem('fdCartMap');
-    sessionStorage.removeItem('fdCartMetaMap');
-    sessionStorage.removeItem('total');
   }
 
   clearLocal() {
     this.cartService.clearCart();
-    sessionStorage.removeItem('fdCartMap');
-    sessionStorage.removeItem('fdCartMetaMap');
-    sessionStorage.removeItem('total');
+    sessionStorage.clear();
   }
 }

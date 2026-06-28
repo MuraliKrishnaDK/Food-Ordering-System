@@ -232,25 +232,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   validationErrors: string[] = [];
-  paying = false;
-
-  private saveOrderHistory(): void {
-    const userData = sessionStorage.getItem('userData');
-    if (!userData) return;
-    const username = JSON.parse(userData).username;
-
-    const items = this.lineItems.map(i => ({
-      name: i.name,
-      quantity: i.quantity,
-      price: i.unitPrice
-    }));
-
-    this.http.post(`${environment.apiUrl}/orders/place`, {
-      username,
-      items: JSON.stringify(items),
-      total: this.grandTotal
-    }).subscribe();
-  }
 
   changeDB(): void {
     this.validCard();
@@ -279,17 +260,10 @@ export class CheckoutComponent implements OnInit {
 
     if (this.validationErrors.length > 0) return;
 
-    this.paying = true;
     const url = `${environment.apiUrl}/changeDB`;
     this.http.get(url).subscribe(
-      () => {
-        this.saveOrderHistory();
-        this.paying = false;
-      },
-      () => {
-        this.paying = false;
-        this.validationErrors = ['Payment request failed. Please try again.'];
-      }
+      () => console.log('DB Updated'),
+      () => alert('Failed to update. Please try again.')
     );
   }
 

@@ -194,11 +194,3 @@
   border: 1px solid rgba(244, 67, 54, 0.4);
   color: #e57373;
 }
-
-@media (max-width: 600px) {
-  .profile-card { padding: 24px 16px; }
-  .profile-row { flex-direction: column; gap: 6px; }
-  .profile-value, .profile-label { width: 100%; }
-  .profile-actions { flex-direction: column; gap: 10px; }
-  .profile-actions button { width: 100%; }
-}

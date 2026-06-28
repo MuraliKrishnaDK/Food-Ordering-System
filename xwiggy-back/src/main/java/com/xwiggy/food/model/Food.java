@@ -18,9 +18,6 @@ public class Food {
     @Column(name = "cartid")
     private String cartID;
 
-    @Column(name = "in_stock", nullable = false)
-    private boolean inStock = true;
-
     public Food(){}
 
     public Food(String id, String item, int price,int quantity, String url, String formID, String cartID) {
@@ -87,14 +84,6 @@ public class Food {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public boolean isInStock() {
-        return inStock;
-    }
-
-    public void setInStock(boolean inStock) {
-        this.inStock = inStock;
     }
 
     @Override

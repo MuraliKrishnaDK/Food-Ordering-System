@@ -26,19 +26,9 @@
             <input type="email" disabled="disabled" class="form-control" id="email" name="email" required placeholder="{{modelUser.email}}">
           </div>
         </div>
-        <!-- Inline confirmation / error toast -->
-        <div *ngIf="successMsg" class="cu-toast cu-success">
-          <span>✓ {{ successMsg }}</span>
-        </div>
-        <div *ngIf="errorMsg" class="cu-toast cu-error">
-          <span>✕ {{ errorMsg }}</span>
-        </div>
-
-        <div class="row" style="margin-top:8px">
+        <div class="row">
           <div class="col-lg-4 form-group">
-            <button type="submit" class="bigbutton" [disabled]="sending">
-              <span>{{ sending ? 'Sending…' : 'Send' }}</span>
-            </button>
+            <button type="submit" class="bigbutton" ><span>Send</span></button>
           </div>
           <div class="col-lg-4 form-group">
             <button type="button" class="bigbutton" routerLink="/menu"><span>Menu</span></button>
@@ -49,4 +39,7 @@
     </div>
   </div>
 </div>
+</div>
+<div *ngIf="gif">
+  <img src="../../assets/images/gif1.gif">
 </div>

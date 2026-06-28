@@ -1,29 +1,3 @@
-<div class="oh-page">
-  <h1 class="oh-title">Order History</h1>
-
-  <div *ngIf="loading" class="oh-empty">Loading your orders…</div>
-
-  <div *ngIf="!loading && orders.length === 0" class="oh-empty">
-    You haven't placed any orders yet. <a routerLink="/menu">Browse the menu</a>
-  </div>
-
-  <div *ngIf="!loading && orders.length > 0" class="oh-list">
-    <div class="oh-card" *ngFor="let order of orders">
-      <div class="oh-card-header">
-        <span class="oh-order-id">Order #{{ order.id }}</span>
-        <span class="oh-date">{{ order.orderedAt | date:'medium' }}</span>
-        <span class="oh-total">${{ order.total.toFixed(2) }}</span>
-      </div>
-      <div class="oh-items">
-        <div class="oh-item-row" *ngFor="let item of parseItems(order.items)">
-          <span class="oh-item-name">{{ item.name }}</span>
-          <span class="oh-item-meta">× {{ item.quantity }} &nbsp;·&nbsp; ${{ (item.price * item.quantity).toFixed(2) }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="oh-actions">
-    <button class="bigbutton oh-btn" routerLink="/menu"><span>Back to Menu</span></button>
-  </div>
-</div>
+<p>
+  order-history works!
+</p>

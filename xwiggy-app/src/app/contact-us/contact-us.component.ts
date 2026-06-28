@@ -41,34 +41,30 @@ export class ContactUsComponent implements OnInit {
     Object.assign(this.modelUser,userData);
   }
 
-  sending = false;
-  successMsg: string = null;
-  errorMsg: string = null;
-
+  gif:boolean=false;
   sendFeedback() {
-    if (!this.modelMessage.message || !this.modelMessage.message.trim()) {
-      this.errorMsg = 'Please enter a message before sending.';
-      return;
-    }
-    this.sending = true;
-    this.successMsg = null;
-    this.errorMsg = null;
-    this.modelMessage.name  = this.modelUser.firstname + ' ' + this.modelUser.lastname;
-    this.modelMessage.email = this.modelUser.email;
+    this.gif=true;
+    this.modelMessage.name=this.modelUser.firstname+this.modelUser.lastname;
+    this.modelMessage.email=this.modelUser.email;
 
-    const url = `${environment.apiUrl}/contact`;
-    this.http.post<contact>(url, this.modelMessage).subscribe(
-      () => {
-        this.sending = false;
-        this.successMsg = 'Your message has been sent! We will get back to you shortly.';
-        this.modelMessage.message = '';
-        setTimeout(() => this.successMsg = null, 6000);
+    let url = `${environment.apiUrl}/contact`;
+    this.http.post <contact>(url,this.modelMessage).subscribe(
+      res => {
+        ContactUsComponent.changeLoading();
+        if(res)
+          alert("Message Sent Successfully");
+          this.gif=!res;
       },
-      () => {
-        this.sending = false;
-        this.errorMsg = 'An error occurred while sending your message. Please try again.';
+      err=>{
+        alert("An error has occurred while sending the message");
+        this.gif=false;
       }
-    );
+    )
+  }
+
+  static changeLoading():void{
+    setTimeout(()=>{
+    },4000);
   }
 
   clearLocal() {

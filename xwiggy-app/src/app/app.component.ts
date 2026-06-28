@@ -25,7 +25,6 @@ export class AppComponent implements OnInit {
 
   cartCount = 0;
   showHeader = false;
-  mobileNavOpen = false;
 
   constructor(private router: Router, private cartService: CartService) {}
 
@@ -55,21 +54,11 @@ export class AppComponent implements OnInit {
     });
   }
 
-  toggleMobileNav(): void {
-    this.mobileNavOpen = !this.mobileNavOpen;
-  }
-
-  closeMobileNav(): void {
-    this.mobileNavOpen = false;
-  }
-
   private updateHeaderVisibility() {
     const url = this.router.url.split('?')[0];
-    this.showHeader = ['/welcome', '/menu', '/checkout', '/success', '/contactUs',
-      '/merchantWelcome', '/merchantMenu', '/addItem', '/settings', '/orderHistory'].some(route =>
+    this.showHeader = ['/welcome', '/menu', '/checkout', '/success', '/contactUs', '/merchantWelcome', '/merchantMenu', '/addItem', '/settings'].some(route =>
       url === route || url.startsWith(route + '/')
     );
-    this.mobileNavOpen = false;
   }
 }
 export interface User{
