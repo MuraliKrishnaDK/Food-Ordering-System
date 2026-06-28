@@ -18,6 +18,9 @@ import { MerchantMenuComponent } from './merchant-menu/merchant-menu.component';
 import { AddItemComponent } from './add-item/add-item.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { SettingsComponent } from './settings/settings.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { OrderHistoryComponent } from './order-history/order-history.component';
 
 const appRoutes:Routes=[
   {path:'login',
@@ -46,6 +49,12 @@ const appRoutes:Routes=[
   component:ContactUsComponent},
   {path:'settings',
   component:SettingsComponent},
+  {path:'forgotPassword',
+  component:ForgotPasswordComponent},
+  {path:'resetPassword',
+  component:ResetPasswordComponent},
+  {path:'orderHistory',
+  component:OrderHistoryComponent},
 ];
 
 @NgModule({
@@ -62,7 +71,10 @@ const appRoutes:Routes=[
     MerchantMenuComponent,
     AddItemComponent,
     ContactUsComponent,
-    SettingsComponent
+    SettingsComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
+    OrderHistoryComponent
   ],
   imports: [
     BrowserModule,

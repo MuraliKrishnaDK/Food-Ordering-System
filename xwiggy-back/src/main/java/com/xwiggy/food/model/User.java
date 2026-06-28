@@ -1,5 +1,6 @@
 package com.xwiggy.food.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -10,6 +11,8 @@ public class User {
 
     @Id
     private String username;
+
+    @Column(length = 72)
     private String password;
     private String firstname;
     private String lastname;

@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS app_user;
 
 CREATE TABLE app_user (
     username  VARCHAR(45)  NOT NULL,
-    password  VARCHAR(45)  NOT NULL,
+    password  VARCHAR(72)  NOT NULL,
     firstname VARCHAR(45)  NOT NULL,
     lastname  VARCHAR(45),
     email     VARCHAR(45),
@@ -43,4 +43,11 @@ CREATE TABLE contact (
     name    VARCHAR(100),
     email   VARCHAR(100),
     message TEXT
+);
+
+CREATE TABLE IF NOT EXISTS password_reset_token (
+    id         BIGSERIAL    PRIMARY KEY,
+    token      VARCHAR(10)  NOT NULL UNIQUE,
+    email      VARCHAR(100) NOT NULL,
+    expires_at TIMESTAMP    NOT NULL
 );

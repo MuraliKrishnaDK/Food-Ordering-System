@@ -233,6 +233,24 @@ export class CheckoutComponent implements OnInit {
 
   validationErrors: string[] = [];
 
+  private saveOrderHistory(): void {
+    const userData = sessionStorage.getItem('userData');
+    if (!userData) return;
+    const username = JSON.parse(userData).username;
+
+    const items = this.lineItems.map(i => ({
+      name: i.name,
+      quantity: i.quantity,
+      price: i.unitPrice
+    }));
+
+    this.http.post(`${environment.apiUrl}/orders/place`, {
+      username,
+      items: JSON.stringify(items),
+      total: this.grandTotal
+    }).subscribe();
+  }
+
   changeDB(): void {
     this.validCard();
     this.validMonth();
@@ -262,7 +280,9 @@ export class CheckoutComponent implements OnInit {
 
     const url = `${environment.apiUrl}/changeDB`;
     this.http.get(url).subscribe(
-      () => console.log('DB Updated'),
+      () => {
+        this.saveOrderHistory();
+      },
       () => alert('Failed to update. Please try again.')
     );
   }
