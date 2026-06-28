@@ -26,7 +26,21 @@ interface CartItemMeta {
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent implements OnInit {
-  private readonly fallbackImageUrl = 'https://loremflickr.com/640/420/indian-food,meal?lock=999999';
+  private readonly categoryColors: { [key: string]: string } = {
+    'Appetizers Veg':      'linear-gradient(135deg, #e65c00, #f9d423)',
+    'Appetizers Non Veg':  'linear-gradient(135deg, #c0392b, #e67e22)',
+    'Breakfast Combos':    'linear-gradient(135deg, #f39c12, #f1c40f)',
+    'Snack Box':           'linear-gradient(135deg, #d35400, #f39c12)',
+    'Chaat Section':       'linear-gradient(135deg, #e74c3c, #f39c12)',
+    'Tiffins/Dosas':       'linear-gradient(135deg, #ca6f1e, #f0b27a)',
+    'Veg Gravies':         'linear-gradient(135deg, #27ae60, #f39c12)',
+    'Mandi Specials':      'linear-gradient(135deg, #a04000, #e59866)',
+    'Dum Biryani':         'linear-gradient(135deg, #b7950b, #f4d03f)',
+    'Non Veg Gravies':     'linear-gradient(135deg, #922b21, #e74c3c)',
+    'Rice Specials':       'linear-gradient(135deg, #1a5276, #2e86c1)',
+    'Hot Beverages':       'linear-gradient(135deg, #4a235a, #884ea0)',
+    'Cold Beverages':      'linear-gradient(135deg, #1a5276, #85c1e9)',
+  };
   categories: MenuCategory[] = [
     {
       name: 'Appetizers Veg',
@@ -370,54 +384,18 @@ export class MenuComponent implements OnInit {
     return `${categoryName}::${itemIndex}::${item.name}`;
   }
 
-  getItemImageUrl(item: MenuItem, categoryName?: string): string {
-    if (item.imageUrl && item.imageUrl.trim().length > 0) {
-      return item.imageUrl;
-    }
-    const tags = this.buildImageTags(item.name, categoryName);
-    const lock = this.getStableLock(`${categoryName || ''}-${item.name}`);
-    return `https://loremflickr.com/640/420/${tags}?lock=${lock}`;
+  getCategoryColor(categoryName?: string): string {
+    return (categoryName && this.categoryColors[categoryName])
+      ? this.categoryColors[categoryName]
+      : 'linear-gradient(135deg, #e65c00, #f9d423)';
   }
 
-  onItemImageError(event: Event): void {
+  onItemImageError(event: Event, item: MenuItem): void {
     const element = event.target as HTMLImageElement | null;
-    if (!element) {
-      return;
+    if (element) {
+      element.style.display = 'none';
+      item.imageUrl = null;
     }
-    if (element.src === this.fallbackImageUrl) {
-      return;
-    }
-    element.src = this.fallbackImageUrl;
-  }
-
-  private getStableLock(value: string): number {
-    let hash = 0;
-    for (let i = 0; i < value.length; i++) {
-      hash = ((hash << 5) - hash) + value.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash) || 1;
-  }
-
-  private buildImageTags(itemName: string, categoryName?: string): string {
-    const tokenize = (value: string): string[] =>
-      (value || '')
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, ' ')
-        .split(/\s+/)
-        .filter((token) => token.length > 2);
-
-    const allTokens = [...tokenize(itemName), ...tokenize(categoryName || '')];
-    const unique: string[] = [];
-    allTokens.forEach((token) => {
-      if (!unique.includes(token) && unique.length < 4) {
-        unique.push(token);
-      }
-    });
-
-    unique.push('food');
-    unique.push('dish');
-    return unique.join(',');
   }
 }
 

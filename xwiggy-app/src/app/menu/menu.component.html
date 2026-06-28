@@ -25,10 +25,17 @@
   <div class="card-grid items-grid" *ngIf="selectedCategory">
     <div class="menu-card item-card" *ngFor="let item of selectedCategory.items; let itemIndex = index">
       <h3>{{item.name}}</h3>
-      <img [src]="getItemImageUrl(item, selectedCategory?.name)"
+      <img *ngIf="item.imageUrl"
+           [src]="item.imageUrl"
            [alt]="item.name"
            class="item-image"
-           (error)="onItemImageError($event)">
+           (error)="onItemImageError($event, item)">
+      <div *ngIf="!item.imageUrl"
+           class="item-image image-placeholder"
+           [style.background]="getCategoryColor(selectedCategory?.name)">
+        <span class="placeholder-emoji">{{ selectedCategory?.emoji }}</span>
+        <span class="placeholder-letter">{{ item.name.charAt(0).toUpperCase() }}</span>
+      </div>
       <div class="price-counter-row">
         <p class="price">{{item.priceText}}</p>
         <div class="qty-stepper" aria-label="Quantity selector">
