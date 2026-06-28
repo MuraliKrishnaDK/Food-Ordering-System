@@ -248,6 +248,97 @@ export class MenuComponent implements OnInit {
   cartCount = 0;
   total = 0;
 
+  searchTerm = '';
+  priceFilter: 'all' | 'under10' | '10to15' | 'above15' = 'all';
+  dietFilter: 'all' | 'veg' | 'nonveg' = 'all';
+  sortOrder: 'default' | 'asc' | 'desc' = 'default';
+
+  private readonly vegCategories = ['Appetizers Veg', 'Breakfast Combos', 'Snack Box',
+    'Chaat Section', 'Tiffins/Dosas', 'Veg Gravies', 'Rice Specials',
+    'Hot Beverages', 'Cold Beverages'];
+  private readonly nonVegCategories = ['Appetizers Non Veg', 'Mandi Specials',
+    'Dum Biryani', 'Non Veg Gravies'];
+
+  get isSearchActive(): boolean {
+    return this.searchTerm.trim().length > 0 ||
+           this.priceFilter !== 'all' ||
+           this.dietFilter !== 'all';
+  }
+
+  get filteredResults(): Array<{ item: MenuItem; categoryName: string; itemIndex: number }> {
+    const term = this.searchTerm.trim().toLowerCase();
+    const results: Array<{ item: MenuItem; categoryName: string; itemIndex: number }> = [];
+
+    for (const category of this.categories) {
+      if (this.dietFilter === 'veg' && !this.vegCategories.includes(category.name)) continue;
+      if (this.dietFilter === 'nonveg' && !this.nonVegCategories.includes(category.name)) continue;
+
+      category.items.forEach((item, idx) => {
+        if (term && !item.name.toLowerCase().includes(term)) return;
+        if (this.priceFilter === 'under10' && item.basePrice >= 10) return;
+        if (this.priceFilter === '10to15' && (item.basePrice < 10 || item.basePrice > 15)) return;
+        if (this.priceFilter === 'above15' && item.basePrice <= 15) return;
+        results.push({ item, categoryName: category.name, itemIndex: idx });
+      });
+    }
+
+    if (this.sortOrder === 'asc')  results.sort((a, b) => a.item.basePrice - b.item.basePrice);
+    if (this.sortOrder === 'desc') results.sort((a, b) => b.item.basePrice - a.item.basePrice);
+    return results;
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.priceFilter = 'all';
+    this.dietFilter = 'all';
+    this.sortOrder = 'default';
+  }
+
+  addToCartFromSearch(item: MenuItem, categoryName: string, itemIndex: number): void {
+    const savedCategory = this.selectedCategory;
+    const tempCat = this.categories.find(c => c.name === categoryName);
+    this.selectedCategory = tempCat || null;
+    const qty = this.getItemQuantity(item, itemIndex);
+    if (qty > 0) {
+      this.addToCart(item, itemIndex);
+    } else {
+      this.increaseItem(item, itemIndex);
+      this.addToCart(item, itemIndex);
+    }
+    this.selectedCategory = savedCategory;
+  }
+
+  getSearchItemKey(item: MenuItem, categoryName: string, itemIndex: number): string {
+    return `${categoryName}::${itemIndex}::${item.name}`;
+  }
+
+  getSearchItemQuantity(item: MenuItem, categoryName: string, itemIndex: number): number {
+    return this.pendingMap[this.getSearchItemKey(item, categoryName, itemIndex)] || 0;
+  }
+
+  increaseSearchItem(item: MenuItem, categoryName: string, itemIndex: number): void {
+    const key = this.getSearchItemKey(item, categoryName, itemIndex);
+    this.pendingMap[key] = (this.pendingMap[key] || 0) + 1;
+  }
+
+  decreaseSearchItem(item: MenuItem, categoryName: string, itemIndex: number): void {
+    const key = this.getSearchItemKey(item, categoryName, itemIndex);
+    const current = this.pendingMap[key] || 0;
+    if (current <= 1) { delete this.pendingMap[key]; } else { this.pendingMap[key] = current - 1; }
+  }
+
+  addSearchItemToCart(item: MenuItem, categoryName: string, itemIndex: number): void {
+    const key = this.getSearchItemKey(item, categoryName, itemIndex);
+    const qty = this.pendingMap[key] || 0;
+    if (qty <= 0) return;
+    this.cartMap[key] = (this.cartMap[key] || 0) + qty;
+    this.cartMetaMap[key] = { name: item.name, basePrice: item.basePrice };
+    this.total = +(this.total + item.basePrice * qty).toFixed(2);
+    delete this.pendingMap[key];
+    this.persistCart();
+    this.refreshCartCount();
+  }
+
   constructor(private router: Router, private cartService: CartService) {}
 
   ngOnInit() {

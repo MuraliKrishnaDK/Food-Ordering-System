@@ -1,43 +1,114 @@
 <div class="body menu-page">
   <h1 class="menu-title" align="center">Menu</h1>
 
-  <div class="menu-toolbar categories-toolbar" *ngIf="!selectedCategory">
-    <p class="hint">Pick a category to explore items</p>
-  </div>
+  <!-- ── Search & Filter Bar ── -->
+  <div class="search-bar-wrap">
+    <div class="search-input-wrap">
+      <i class="fa fa-search search-icon"></i>
+      <input class="search-input" type="text" placeholder="Search dishes…"
+             [(ngModel)]="searchTerm" />
+      <button *ngIf="searchTerm" class="clear-search-btn" (click)="searchTerm = ''">✕</button>
+    </div>
 
-  <div class="menu-toolbar category-detail-toolbar" *ngIf="selectedCategory">
-    <button type="button" class="bigbutton back-btn" (click)="backToCategories()"><span>Back</span></button>
-    <h2 class="selected-category">{{selectedCategory.emoji}} {{selectedCategory.name}}</h2>
-    <div class="toolbar-right-actions">
-      <p class="total inline-total">Cart Total: ${{total.toFixed(2)}}</p>
-      <button routerLink="/checkout" class="bigbutton"><span>Checkout</span></button>
+    <div class="filter-controls">
+      <select class="filter-select" [(ngModel)]="dietFilter">
+        <option value="all">🍽 All</option>
+        <option value="veg">🥗 Veg Only</option>
+        <option value="nonveg">🍗 Non-Veg Only</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="priceFilter">
+        <option value="all">Any Price</option>
+        <option value="under10">Under $10</option>
+        <option value="10to15">$10 – $15</option>
+        <option value="above15">Above $15</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="sortOrder">
+        <option value="default">Default Order</option>
+        <option value="asc">Price: Low → High</option>
+        <option value="desc">Price: High → Low</option>
+      </select>
+
+      <button *ngIf="isSearchActive" class="clear-filters-btn" (click)="clearFilters()">Clear All</button>
     </div>
   </div>
 
-  <div class="card-grid categories-grid" *ngIf="!selectedCategory">
-    <div class="menu-card category-card" *ngFor="let category of categories" (click)="selectCategory(category)">
-      <div class="category-emoji">{{category.emoji}}</div>
-      <h3>{{category.name}}</h3>
-      <p>{{category.items.length}} items</p>
+  <!-- ── Search Results View ── -->
+  <div *ngIf="isSearchActive">
+    <div class="search-results-header">
+      <span>{{ filteredResults.length }} result(s)</span>
+      <span class="cart-total-inline" *ngIf="total > 0">Cart: ${{ total.toFixed(2) }}
+        <button routerLink="/checkout" class="bigbutton checkout-inline-btn"><span>Checkout</span></button>
+      </span>
     </div>
-  </div>
 
-  <div class="card-grid items-grid" *ngIf="selectedCategory">
-    <div class="menu-card item-card" *ngFor="let item of selectedCategory.items; let itemIndex = index">
-      <h3>{{item.name}}</h3>
-      <img [src]="getItemImageUrl(item, selectedCategory?.name)"
-           [alt]="item.name"
-           class="item-image"
-           (error)="onItemImageError($event)">
-      <div class="price-counter-row">
-        <p class="price">{{item.priceText}}</p>
-        <div class="qty-stepper" aria-label="Quantity selector">
-          <button type="button" class="step-btn" (click)="decreaseItem(item, itemIndex)">-</button>
-          <span class="qty-value">{{getItemQuantity(item, itemIndex)}}</span>
-          <button type="button" class="step-btn" (click)="increaseItem(item, itemIndex)">+</button>
+    <div *ngIf="filteredResults.length === 0" class="no-results">
+      No items match your search. <button class="link-btn" (click)="clearFilters()">Clear filters</button>
+    </div>
+
+    <div class="card-grid items-grid" *ngIf="filteredResults.length > 0">
+      <div class="menu-card item-card" *ngFor="let r of filteredResults">
+        <span class="category-tag">{{ r.categoryName }}</span>
+        <h3>{{ r.item.name }}</h3>
+        <img [src]="getItemImageUrl(r.item, r.categoryName)"
+             [alt]="r.item.name" class="item-image"
+             (error)="onItemImageError($event)">
+        <div class="price-counter-row">
+          <p class="price">{{ r.item.priceText }}</p>
+          <div class="qty-stepper">
+            <button type="button" class="step-btn" (click)="decreaseSearchItem(r.item, r.categoryName, r.itemIndex)">-</button>
+            <span class="qty-value">{{ getSearchItemQuantity(r.item, r.categoryName, r.itemIndex) }}</span>
+            <button type="button" class="step-btn" (click)="increaseSearchItem(r.item, r.categoryName, r.itemIndex)">+</button>
+          </div>
         </div>
+        <button type="button" class="bigbutton add-btn"
+                (click)="addSearchItemToCart(r.item, r.categoryName, r.itemIndex)">
+          <span>Add to Cart</span>
+        </button>
       </div>
-      <button type="button" class="bigbutton add-btn" (click)="addToCart(item, itemIndex)"><span>Add to Cart</span></button>
+    </div>
+  </div>
+
+  <!-- ── Normal Category View ── -->
+  <div *ngIf="!isSearchActive">
+    <div class="menu-toolbar categories-toolbar" *ngIf="!selectedCategory">
+      <p class="hint">Pick a category to explore items</p>
+    </div>
+
+    <div class="menu-toolbar category-detail-toolbar" *ngIf="selectedCategory">
+      <button type="button" class="bigbutton back-btn" (click)="backToCategories()"><span>Back</span></button>
+      <h2 class="selected-category">{{selectedCategory.emoji}} {{selectedCategory.name}}</h2>
+      <div class="toolbar-right-actions">
+        <p class="total inline-total">Cart Total: ${{total.toFixed(2)}}</p>
+        <button routerLink="/checkout" class="bigbutton"><span>Checkout</span></button>
+      </div>
+    </div>
+
+    <div class="card-grid categories-grid" *ngIf="!selectedCategory">
+      <div class="menu-card category-card" *ngFor="let category of categories" (click)="selectCategory(category)">
+        <div class="category-emoji">{{category.emoji}}</div>
+        <h3>{{category.name}}</h3>
+        <p>{{category.items.length}} items</p>
+      </div>
+    </div>
+
+    <div class="card-grid items-grid" *ngIf="selectedCategory">
+      <div class="menu-card item-card" *ngFor="let item of selectedCategory.items; let itemIndex = index">
+        <h3>{{item.name}}</h3>
+        <img [src]="getItemImageUrl(item, selectedCategory?.name)"
+             [alt]="item.name" class="item-image"
+             (error)="onItemImageError($event)">
+        <div class="price-counter-row">
+          <p class="price">{{item.priceText}}</p>
+          <div class="qty-stepper" aria-label="Quantity selector">
+            <button type="button" class="step-btn" (click)="decreaseItem(item, itemIndex)">-</button>
+            <span class="qty-value">{{getItemQuantity(item, itemIndex)}}</span>
+            <button type="button" class="step-btn" (click)="increaseItem(item, itemIndex)">+</button>
+          </div>
+        </div>
+        <button type="button" class="bigbutton add-btn" (click)="addToCart(item, itemIndex)"><span>Add to Cart</span></button>
+      </div>
     </div>
   </div>
 
