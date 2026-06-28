@@ -1,5 +1,6 @@
 <div class="profile-page">
   <div class="profile-card">
+
     <div class="profile-header">
       <h2 class="profile-greeting">Welcome, {{modelUser.firstname}}</h2>
       <span class="account-badge">User Account</span>
@@ -7,7 +8,12 @@
 
     <div class="profile-divider"></div>
 
-    <div class="profile-fields">
+    <!-- Status messages -->
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage"   class="alert alert-error">{{ errorMessage }}</div>
+
+    <!-- ── VIEW MODE ── -->
+    <div *ngIf="!isEditing" class="profile-fields">
       <div class="profile-row">
         <span class="field-label"><i class="fa fa-user"></i> First Name</span>
         <span class="field-value">{{modelUser.firstname}}</span>
@@ -24,6 +30,55 @@
         <span class="field-label"><i class="fa fa-envelope"></i> E-Mail ID</span>
         <span class="field-value">{{modelUser.email}}</span>
       </div>
+      <div class="profile-row">
+        <span class="field-label"><i class="fa fa-map-marker"></i> Address</span>
+        <span class="field-value">{{modelUser.address}}</span>
+      </div>
+
+      <div class="profile-actions">
+        <button class="btn-edit" (click)="startEdit()">
+          <i class="fa fa-pencil"></i> Edit Profile
+        </button>
+      </div>
     </div>
+
+    <!-- ── EDIT MODE ── -->
+    <div *ngIf="isEditing" class="profile-fields">
+      <div class="edit-row">
+        <label class="edit-label"><i class="fa fa-user"></i> First Name</label>
+        <input class="edit-input" type="text" [(ngModel)]="editUser.firstname"
+               placeholder="First name" maxlength="45" />
+      </div>
+      <div class="edit-row">
+        <label class="edit-label"><i class="fa fa-user-circle"></i> Last Name</label>
+        <input class="edit-input" type="text" [(ngModel)]="editUser.lastname"
+               placeholder="Last name" maxlength="45" />
+      </div>
+      <div class="edit-row">
+        <label class="edit-label"><i class="fa fa-mobile"></i> Mobile Number</label>
+        <input class="edit-input" type="tel" [(ngModel)]="editUser.phone"
+               placeholder="Mobile number" maxlength="15" />
+      </div>
+      <div class="edit-row">
+        <label class="edit-label"><i class="fa fa-envelope"></i> E-Mail ID</label>
+        <input class="edit-input" type="email" [(ngModel)]="editUser.email"
+               placeholder="Email address" maxlength="45" />
+      </div>
+      <div class="edit-row">
+        <label class="edit-label"><i class="fa fa-map-marker"></i> Address</label>
+        <input class="edit-input" type="text" [(ngModel)]="editUser.address"
+               placeholder="Address" maxlength="45" />
+      </div>
+
+      <div class="profile-actions edit-actions">
+        <button class="btn-save" (click)="saveEdit()" [disabled]="saving">
+          <i class="fa fa-check"></i> {{ saving ? 'Saving...' : 'Save Changes' }}
+        </button>
+        <button class="btn-cancel" (click)="cancelEdit()" [disabled]="saving">
+          <i class="fa fa-times"></i> Cancel
+        </button>
+      </div>
+    </div>
+
   </div>
 </div>
