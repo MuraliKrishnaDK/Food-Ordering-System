@@ -2,8 +2,7 @@ services:
   - type: web
     name: food-ordering-system
     runtime: docker
-    dockerfilePath: ./xwiggy-back/Dockerfile
-    dockerContext: ./xwiggy-back
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: SPRING_DATASOURCE_URL
         sync: false
