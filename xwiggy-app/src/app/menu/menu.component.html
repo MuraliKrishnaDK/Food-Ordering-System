@@ -34,7 +34,7 @@
            class="item-image image-placeholder"
            [style.background]="getCategoryColor(selectedCategory?.name)">
         <span class="placeholder-emoji">{{ selectedCategory?.emoji }}</span>
-        <span class="placeholder-letter">{{ item.name.charAt(0).toUpperCase() }}</span>
+        <span class="placeholder-name">{{ item.name }}</span>
       </div>
       <div class="price-counter-row">
         <p class="price">{{item.priceText}}</p>
