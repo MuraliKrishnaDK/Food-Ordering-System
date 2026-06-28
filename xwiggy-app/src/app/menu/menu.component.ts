@@ -521,6 +521,7 @@ export interface menu {
   url: string;
   formID: string;
   cartID: string;
+  inStock: boolean;
 }
 
 export interface cart {

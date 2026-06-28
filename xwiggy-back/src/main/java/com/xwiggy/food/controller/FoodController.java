@@ -73,4 +73,21 @@ public class FoodController {
         response.put("msg", "Item deleted.");
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/menu/{id}/stock")
+    public ResponseEntity<Map<String, Object>> toggleStock(@PathVariable String id) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<Food> opt = foodRepository.findById(id);
+        if (!opt.isPresent()) {
+            response.put("status", false);
+            response.put("msg", "Item not found.");
+            return ResponseEntity.ok(response);
+        }
+        Food food = opt.get();
+        food.setInStock(!food.isInStock());
+        foodRepository.save(food);
+        response.put("status", true);
+        response.put("inStock", food.isInStock());
+        return ResponseEntity.ok(response);
+    }
 }

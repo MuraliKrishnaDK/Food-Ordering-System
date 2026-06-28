@@ -116,6 +116,20 @@ export class MerchantMenuComponent implements OnInit {
     );
   }
 
+  toggleStock(item: menu): void {
+    this.http.patch<any>(`${environment.apiUrl}/menu/${item.id}/stock`, {}).subscribe(
+      res => {
+        if (res && res.status !== undefined) {
+          item.inStock = res.inStock;
+          const label = item.inStock ? 'in stock' : 'out of stock';
+          this.successMessage = `"${item.item}" marked as ${label}.`;
+          setTimeout(() => this.successMessage = null, 3000);
+        }
+      },
+      () => { this.errorMessage = 'Could not update stock status.'; }
+    );
+  }
+
   clearLocal(): void {
     this.cartService.clearCart();
     sessionStorage.clear();

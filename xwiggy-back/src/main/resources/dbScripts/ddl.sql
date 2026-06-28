@@ -25,7 +25,16 @@ CREATE TABLE food (
     url      VARCHAR(120),
     formid   VARCHAR(50)  NOT NULL,
     cartid   VARCHAR(45)  NOT NULL,
+    in_stock BOOLEAN      NOT NULL DEFAULT TRUE,
     PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id         BIGSERIAL    PRIMARY KEY,
+    username   VARCHAR(45)  NOT NULL,
+    items      TEXT         NOT NULL,
+    total      DOUBLE PRECISION NOT NULL,
+    ordered_at TIMESTAMP    NOT NULL
 );
 
 CREATE TABLE cart (

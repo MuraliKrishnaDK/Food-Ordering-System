@@ -21,40 +21,34 @@ import { SettingsComponent } from './settings/settings.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
+import { AuthGuard } from './guards/auth.guard';
+import { MerchantGuard } from './guards/merchant.guard';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 const appRoutes:Routes=[
-  {path:'login',
-  component:LoginComponent},
-  {path:'register',
-  component:RegisterComponent},
-  {path:'welcome',
-  component:WelcomeComponent},
-  {path:'menu',
-  component:MenuComponent},
-  {path:'home',
-  component:HomeComponent},
-  {path:'checkout',
-  component:CheckoutComponent},
-  {path:'success',
-  component:SuccessComponent},
-  {path:'merchantWelcome',
-  component:MerchantWelcomeComponent},
-  {path:'merchantMenu',
-  component:MerchantMenuComponent},
-  {path:'',
-  component:HomeComponent},
-  {path:'addItem',
-  component:AddItemComponent},
-  {path:'contactUs',
-  component:ContactUsComponent},
-  {path:'settings',
-  component:SettingsComponent},
-  {path:'forgotPassword',
-  component:ForgotPasswordComponent},
-  {path:'resetPassword',
-  component:ResetPasswordComponent},
-  {path:'orderHistory',
-  component:OrderHistoryComponent},
+  {path:'login',     component:LoginComponent},
+  {path:'register',  component:RegisterComponent},
+  {path:'home',      component:HomeComponent},
+  {path:'',          component:HomeComponent},
+  {path:'forgotPassword', component:ForgotPasswordComponent},
+  {path:'resetPassword',  component:ResetPasswordComponent},
+
+  // Customer-only routes
+  {path:'welcome',      component:WelcomeComponent,      canActivate:[AuthGuard]},
+  {path:'menu',         component:MenuComponent,          canActivate:[AuthGuard]},
+  {path:'checkout',     component:CheckoutComponent,      canActivate:[AuthGuard]},
+  {path:'success',      component:SuccessComponent,       canActivate:[AuthGuard]},
+  {path:'orderHistory', component:OrderHistoryComponent,  canActivate:[AuthGuard]},
+  {path:'contactUs',    component:ContactUsComponent,     canActivate:[AuthGuard]},
+  {path:'settings',     component:SettingsComponent,      canActivate:[AuthGuard]},
+
+  // Merchant-only routes
+  {path:'merchantWelcome', component:MerchantWelcomeComponent, canActivate:[AuthGuard, MerchantGuard]},
+  {path:'merchantMenu',    component:MerchantMenuComponent,    canActivate:[AuthGuard, MerchantGuard]},
+  {path:'addItem',         component:AddItemComponent,         canActivate:[AuthGuard, MerchantGuard]},
+
+  // 404
+  {path:'**', component:NotFoundComponent},
 ];
 
 @NgModule({
@@ -74,7 +68,8 @@ const appRoutes:Routes=[
     SettingsComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    OrderHistoryComponent
+    OrderHistoryComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,

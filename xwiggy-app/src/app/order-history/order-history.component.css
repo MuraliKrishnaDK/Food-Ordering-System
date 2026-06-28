@@ -89,3 +89,10 @@
 }
 .bigbutton:hover { background-color: #d84315; }
 .bigbutton span { display: inline-block; }
+
+@media (max-width: 600px) {
+  .oh-page { padding: 16px; }
+  .oh-title { font-size: 1.5rem; }
+  .oh-card { padding: 14px 14px; }
+  .oh-card-header { flex-direction: column; align-items: flex-start; }
+}

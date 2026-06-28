@@ -1,26 +1,53 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <header *ngIf="showHeader" class="app-header">
   <div class="header-content">
-    <a routerLink="/menu" class="logo">FoodDoor</a>
-    <nav class="header-nav">
+    <a routerLink="/menu" class="logo" (click)="closeMobileNav()">FoodDoor</a>
+
+    <!-- Desktop nav -->
+    <nav class="header-nav desktop-nav">
       <a routerLink="/menu" routerLinkActive="active">Menu</a>
+      <a routerLink="/orderHistory" routerLinkActive="active">My Orders</a>
       <a routerLink="/checkout" class="cart-link" routerLinkActive="active">
         <i class="fa fa-shopping-cart"></i>
         <span class="cart-badge">{{cartCount}}</span>
       </a>
       <div class="user-menu-wrap">
-        <span class="user-link" aria-label="Account menu">
-          <i class="fa fa-user"></i>
-        </span>
+        <span class="user-link" aria-label="Account menu"><i class="fa fa-user"></i></span>
         <div class="user-dropdown">
           <a *ngIf="!isMerchantUser" routerLink="/welcome" class="user-dropdown-item">Profile</a>
           <a *ngIf="isMerchantUser" routerLink="/merchantWelcome" class="user-dropdown-item">Profile</a>
+          <a *ngIf="isMerchantUser" routerLink="/merchantMenu" class="user-dropdown-item">Manage Menu</a>
           <a routerLink="/settings" class="user-dropdown-item">Settings</a>
           <button type="button" class="user-dropdown-item user-dropdown-logout" (click)="logout()">Logout</button>
         </div>
       </div>
     </nav>
+
+    <!-- Mobile: cart + hamburger -->
+    <div class="mobile-header-right">
+      <a routerLink="/checkout" class="cart-link" (click)="closeMobileNav()">
+        <i class="fa fa-shopping-cart"></i>
+        <span class="cart-badge">{{cartCount}}</span>
+      </a>
+      <button class="hamburger" (click)="toggleMobileNav()" aria-label="Open menu">
+        <span [class.open]="mobileNavOpen"></span>
+        <span [class.open]="mobileNavOpen"></span>
+        <span [class.open]="mobileNavOpen"></span>
+      </button>
+    </div>
   </div>
+
+  <!-- Mobile dropdown nav -->
+  <nav class="mobile-nav" [class.mobile-nav-open]="mobileNavOpen">
+    <a routerLink="/menu"         (click)="closeMobileNav()">Menu</a>
+    <a routerLink="/orderHistory" (click)="closeMobileNav()">My Orders</a>
+    <a *ngIf="!isMerchantUser" routerLink="/welcome"         (click)="closeMobileNav()">Profile</a>
+    <a *ngIf="isMerchantUser"  routerLink="/merchantWelcome" (click)="closeMobileNav()">Profile</a>
+    <a *ngIf="isMerchantUser"  routerLink="/merchantMenu"    (click)="closeMobileNav()">Manage Menu</a>
+    <a routerLink="/settings"     (click)="closeMobileNav()">Settings</a>
+    <a routerLink="/contactUs"    (click)="closeMobileNav()">Contact Us</a>
+    <button type="button" class="mobile-nav-logout" (click)="logout()">Logout</button>
+  </nav>
 </header>
 <main class="app-main">
   <router-outlet></router-outlet>

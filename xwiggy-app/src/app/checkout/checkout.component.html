@@ -99,9 +99,11 @@
 
         <div class="payment-actions">
           <button class="bigbutton pay-btn"
-                  [routerLink]="(cardNumberVal && monthVal && yearVal && cvvVal && nameOnCardVal) ? ['/success'] : null"
-                  (click)="changeDB()">
-            <span>Pay ${{ grandTotal.toFixed(2) }}</span>
+                  [routerLink]="(cardNumberVal && monthVal && yearVal && cvvVal && nameOnCardVal && !paying) ? ['/success'] : null"
+                  (click)="changeDB()"
+                  [disabled]="paying">
+            <span *ngIf="!paying">Pay ${{ grandTotal.toFixed(2) }}</span>
+            <span *ngIf="paying">Processing…</span>
           </button>
         </div>
       </div>

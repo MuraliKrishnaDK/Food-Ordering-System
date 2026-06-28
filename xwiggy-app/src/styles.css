@@ -8,3 +8,19 @@ html, body {
 body {
   background: linear-gradient(to right, #f07a1f 0%, #f4e425 100%);
 }
+
+/* Global responsive helpers */
+@media (max-width: 768px) {
+  /* Prevent horizontal overflow on small screens */
+  * { box-sizing: border-box; }
+
+  /* Ensure inputs / selects are full-width by default */
+  input, select, textarea {
+    max-width: 100%;
+  }
+
+  /* Comfortable tap targets */
+  button, a, input[type="submit"] {
+    min-height: 44px;
+  }
+}

@@ -15,8 +15,12 @@
 
       <!-- ── VIEW MODE ── -->
       <ng-container *ngIf="editingId !== m.id">
-        <img class="mm-img" [src]="sanitizer.bypassSecurityTrustUrl(m.url)" [alt]="m.item"
-             onerror="this.src='assets/menu-images/default.jpeg'" />
+        <div class="mm-img-wrap">
+          <img class="mm-img" [src]="sanitizer.bypassSecurityTrustUrl(m.url)" [alt]="m.item"
+               onerror="this.src='assets/menu-images/default.jpeg'" />
+          <span class="stock-badge out-of-stock" *ngIf="!m.inStock">Out of Stock</span>
+          <span class="stock-badge in-stock"     *ngIf="m.inStock">In Stock</span>
+        </div>
         <div class="mm-info">
           <h3 class="mm-item-name">{{ m.item }}</h3>
           <p class="mm-meta">Price: <strong>${{ m.price }}</strong></p>
@@ -24,6 +28,10 @@
         </div>
         <div class="mm-actions">
           <button class="mm-btn edit-btn" (click)="startEdit(m)">✏ Edit</button>
+          <button class="mm-btn stock-btn" [class.out-stock-btn]="m.inStock" [class.in-stock-btn]="!m.inStock"
+                  (click)="toggleStock(m)">
+            {{ m.inStock ? '🚫 Mark Out of Stock' : '✅ Mark In Stock' }}
+          </button>
           <button class="mm-btn delete-btn" (click)="confirmDelete(m.id)">🗑 Delete</button>
         </div>
       </ng-container>
