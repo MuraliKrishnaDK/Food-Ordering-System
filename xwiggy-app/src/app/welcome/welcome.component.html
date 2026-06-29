@@ -335,7 +335,10 @@
           </label>
         </div>
         <div class="section-actions">
-          <button class="btn-primary" (click)="saveNotifPrefs()"><i class="fa fa-check"></i> Save Preferences</button>
+          <div *ngIf="notifError" class="alert alert-error"><i class="fa fa-exclamation-circle"></i> {{ notifError }}</div>
+          <button class="btn-primary" (click)="saveNotifPrefs()" [disabled]="notifSaving">
+            <i class="fa fa-check"></i> {{ notifSaving ? 'Saving...' : 'Save Preferences' }}
+          </button>
         </div>
       </div>
     </section>

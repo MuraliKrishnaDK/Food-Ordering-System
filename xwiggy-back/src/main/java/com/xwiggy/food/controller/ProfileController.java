@@ -61,4 +61,71 @@ public class ProfileController {
         response.put("user", user);
         return response;
     }
+
+    @GetMapping("/notifications/{username}")
+    public Map<String, Object> getNotificationPrefs(@PathVariable String username) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> opt = userDao.findById(username);
+        if (!opt.isPresent()) {
+            response.put("status", false);
+            response.put("msg", "User not found.");
+            return response;
+        }
+        User user = opt.get();
+        response.put("status", true);
+        response.put("preferences", buildNotifPrefs(user));
+        return response;
+    }
+
+    @PutMapping("/notifications/{username}")
+    public Map<String, Object> updateNotificationPrefs(
+            @PathVariable String username,
+            @RequestBody Map<String, Object> body) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> opt = userDao.findById(username);
+        if (!opt.isPresent()) {
+            response.put("status", false);
+            response.put("msg", "User not found.");
+            return response;
+        }
+
+        User user = opt.get();
+        if (body.containsKey("orderConfirm")) {
+            user.setNotifOrderConfirm(toBoolean(body.get("orderConfirm"), true));
+        }
+        if (body.containsKey("statusUpdates")) {
+            user.setNotifStatusUpdates(toBoolean(body.get("statusUpdates"), true));
+        }
+        if (body.containsKey("promos")) {
+            user.setNotifPromos(toBoolean(body.get("promos"), false));
+        }
+        if (body.containsKey("newsletter")) {
+            user.setNotifNewsletter(toBoolean(body.get("newsletter"), false));
+        }
+
+        userDao.save(user);
+        response.put("status", true);
+        response.put("preferences", buildNotifPrefs(user));
+        response.put("msg", "Notification preferences saved.");
+        return response;
+    }
+
+    private Map<String, Boolean> buildNotifPrefs(User user) {
+        Map<String, Boolean> prefs = new HashMap<>();
+        prefs.put("orderConfirm", user.isNotifOrderConfirm());
+        prefs.put("statusUpdates", user.isNotifStatusUpdates());
+        prefs.put("promos", user.isNotifPromos());
+        prefs.put("newsletter", user.isNotifNewsletter());
+        return prefs;
+    }
+
+    private boolean toBoolean(Object value, boolean defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        return Boolean.parseBoolean(String.valueOf(value));
+    }
 }

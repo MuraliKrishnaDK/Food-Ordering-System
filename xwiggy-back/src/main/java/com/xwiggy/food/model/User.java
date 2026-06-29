@@ -1,5 +1,6 @@
 package com.xwiggy.food.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -39,6 +40,18 @@ public class User {
 
     private long phone;
     private boolean merchant;
+
+    @Column(name = "notif_order_confirm", nullable = false)
+    private boolean notifOrderConfirm = true;
+
+    @Column(name = "notif_status_updates", nullable = false)
+    private boolean notifStatusUpdates = true;
+
+    @Column(name = "notif_promos", nullable = false)
+    private boolean notifPromos = false;
+
+    @Column(name = "notif_newsletter", nullable = false)
+    private boolean notifNewsletter = false;
 
     public User() {
 
@@ -122,6 +135,18 @@ public class User {
     public void setPhone(long phone) {
         this.phone = phone;
     }
+
+    public boolean isNotifOrderConfirm() { return notifOrderConfirm; }
+    public void setNotifOrderConfirm(boolean notifOrderConfirm) { this.notifOrderConfirm = notifOrderConfirm; }
+
+    public boolean isNotifStatusUpdates() { return notifStatusUpdates; }
+    public void setNotifStatusUpdates(boolean notifStatusUpdates) { this.notifStatusUpdates = notifStatusUpdates; }
+
+    public boolean isNotifPromos() { return notifPromos; }
+    public void setNotifPromos(boolean notifPromos) { this.notifPromos = notifPromos; }
+
+    public boolean isNotifNewsletter() { return notifNewsletter; }
+    public void setNotifNewsletter(boolean notifNewsletter) { this.notifNewsletter = notifNewsletter; }
 
     @Override
     public String toString() {

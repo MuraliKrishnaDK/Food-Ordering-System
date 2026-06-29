@@ -1,7 +1,7 @@
 package com.xwiggy.food.controller;
 
 import com.xwiggy.food.dao.OrderRepository;
-import com.xwiggy.food.dao.UserEmailDao;
+import com.xwiggy.food.dao.UserDao;
 import com.xwiggy.food.model.Order;
 import com.xwiggy.food.model.User;
 import com.xwiggy.food.service.EmailService;
@@ -26,7 +26,7 @@ public class OrderController {
     private OrderRepository orderRepository;
 
     @Autowired
-    private UserEmailDao userEmailDao;
+    private UserDao userDao;
 
     @Autowired
     private EmailService emailService;
@@ -48,15 +48,7 @@ public class OrderController {
             response.put("orderStatus", saved.getStatus().name());
             response.put("deliveryCode", saved.getDeliveryCode());
 
-            // Send confirmation email asynchronously
-            try {
-                userEmailDao.findById(saved.getUsername()).ifPresent(user -> {
-                    if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-                        emailService.sendOrderConfirmation(
-                                user.getEmail(), saved.getId(), saved.getItems(), saved.getTotal());
-                    }
-                });
-            } catch (Exception ignored) {}
+            notifyOrderConfirmation(saved);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -88,7 +80,7 @@ public class OrderController {
         return orderRepository.findAllByOrderByCreatedAtDesc();
     }
 
-    /** Merchant — update order status */
+    /** Merchant / system — update order status */
     @PutMapping("/{id}/status")
     public ResponseEntity<Map<String, Object>> updateStatus(
             @PathVariable Long id,
@@ -102,15 +94,47 @@ public class OrderController {
         }
         try {
             Order order = opt.get();
+            Order.Status previousStatus = order.getStatus();
             order.setStatus(Order.Status.valueOf(body.get("status")));
             orderRepository.save(order);
             response.put("status", true);
             response.put("orderStatus", order.getStatus().name());
+
+            notifyStatusUpdate(order, previousStatus);
+
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             response.put("status", false);
             response.put("msg", "Invalid status value.");
             return ResponseEntity.ok(response);
+        }
+    }
+
+    private void notifyOrderConfirmation(Order order) {
+        try {
+            userDao.findById(order.getUsername()).ifPresent(user -> {
+                try {
+                    emailService.sendOrderConfirmation(user, order);
+                } catch (Exception ex) {
+                    System.err.println("[FoodDoor] Order confirmation email failed: " + ex.getMessage());
+                }
+            });
+        } catch (Exception ex) {
+            System.err.println("[FoodDoor] Order confirmation lookup failed: " + ex.getMessage());
+        }
+    }
+
+    private void notifyStatusUpdate(Order order, Order.Status previousStatus) {
+        try {
+            userDao.findById(order.getUsername()).ifPresent(user -> {
+                try {
+                    emailService.sendOrderStatusUpdate(user, order, previousStatus);
+                } catch (Exception ex) {
+                    System.err.println("[FoodDoor] Status update email failed: " + ex.getMessage());
+                }
+            });
+        } catch (Exception ex) {
+            System.err.println("[FoodDoor] Status update lookup failed: " + ex.getMessage());
         }
     }
 }

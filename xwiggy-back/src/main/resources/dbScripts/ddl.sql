@@ -14,6 +14,10 @@ CREATE TABLE app_user (
     address   VARCHAR(45)  NOT NULL,
     phone     BIGINT       NOT NULL,
     merchant  BOOLEAN      NOT NULL DEFAULT FALSE,
+    notif_order_confirm  BOOLEAN NOT NULL DEFAULT TRUE,
+    notif_status_updates BOOLEAN NOT NULL DEFAULT TRUE,
+    notif_promos         BOOLEAN NOT NULL DEFAULT FALSE,
+    notif_newsletter     BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (username)
 );
 
@@ -72,6 +76,10 @@ CREATE TABLE IF NOT EXISTS orders (
 
 -- Run on existing databases if column is missing:
 -- ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_code VARCHAR(4);
+-- ALTER TABLE app_user ADD COLUMN IF NOT EXISTS notif_order_confirm BOOLEAN NOT NULL DEFAULT TRUE;
+-- ALTER TABLE app_user ADD COLUMN IF NOT EXISTS notif_status_updates BOOLEAN NOT NULL DEFAULT TRUE;
+-- ALTER TABLE app_user ADD COLUMN IF NOT EXISTS notif_promos BOOLEAN NOT NULL DEFAULT FALSE;
+-- ALTER TABLE app_user ADD COLUMN IF NOT EXISTS notif_newsletter BOOLEAN NOT NULL DEFAULT FALSE;
 
 CREATE TABLE IF NOT EXISTS password_reset_token (
     id         BIGSERIAL    PRIMARY KEY,

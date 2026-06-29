@@ -46,6 +46,8 @@ export class WelcomeComponent implements OnInit {
 
   /* ── Notifications ── */
   notifPrefs = { orderConfirm: true, statusUpdates: true, promos: false, newsletter: false };
+  notifSaving = false;
+  notifError: string = null;
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -291,13 +293,56 @@ export class WelcomeComponent implements OnInit {
 
   /* ══ NOTIFICATIONS ══ */
   loadNotifPrefs() {
+    const url = `${environment.apiUrl}/profile/notifications/${this.modelUser.username}`;
+    this.http.get<any>(url).subscribe(
+      res => {
+        if (res && res.status && res.preferences) {
+          this.notifPrefs = {
+            orderConfirm: !!res.preferences.orderConfirm,
+            statusUpdates: !!res.preferences.statusUpdates,
+            promos: !!res.preferences.promos,
+            newsletter: !!res.preferences.newsletter
+          };
+          return;
+        }
+        this.loadNotifPrefsFromLocal();
+      },
+      () => this.loadNotifPrefsFromLocal()
+    );
+  }
+
+  private loadNotifPrefsFromLocal() {
     const raw = localStorage.getItem(`notif_${this.modelUser.username}`);
     if (raw) { Object.assign(this.notifPrefs, JSON.parse(raw)); }
   }
 
   saveNotifPrefs() {
-    localStorage.setItem(`notif_${this.modelUser.username}`, JSON.stringify(this.notifPrefs));
-    this.successMessage = 'Notification preferences saved.';
-    setTimeout(() => this.successMessage = null, 3000);
+    this.notifSaving = true;
+    this.notifError = null;
+    const url = `${environment.apiUrl}/profile/notifications/${this.modelUser.username}`;
+    this.http.put<any>(url, this.notifPrefs).subscribe(
+      res => {
+        this.notifSaving = false;
+        if (res && res.status) {
+          if (res.preferences) {
+            this.notifPrefs = {
+              orderConfirm: !!res.preferences.orderConfirm,
+              statusUpdates: !!res.preferences.statusUpdates,
+              promos: !!res.preferences.promos,
+              newsletter: !!res.preferences.newsletter
+            };
+          }
+          localStorage.setItem(`notif_${this.modelUser.username}`, JSON.stringify(this.notifPrefs));
+          this.successMessage = 'Notification preferences saved.';
+          setTimeout(() => this.successMessage = null, 3000);
+        } else {
+          this.notifError = (res && res.msg) ? res.msg : 'Could not save preferences.';
+        }
+      },
+      () => {
+        this.notifSaving = false;
+        this.notifError = 'Network error. Please try again.';
+      }
+    );
   }
 }
