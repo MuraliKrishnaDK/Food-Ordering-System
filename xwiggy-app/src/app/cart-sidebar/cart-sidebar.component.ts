@@ -96,6 +96,11 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/checkout']);
   }
 
+  browseMenu(): void {
+    this.sidebarService.close();
+    this.router.navigate(['/menu']);
+  }
+
   close(): void { this.sidebarService.close(); }
 
   @HostListener('document:keydown.escape')

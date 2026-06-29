@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  // Point at Spring Boot directly in dev (ng serve on :4200 has no backend routes).
   apiUrl: 'http://localhost:8080'
 };
 

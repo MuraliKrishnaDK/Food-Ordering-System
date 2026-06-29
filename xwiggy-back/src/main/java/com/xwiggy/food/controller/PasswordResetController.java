@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -45,7 +46,7 @@ public class PasswordResetController {
             return ResponseEntity.ok(response);
         }
 
-        Optional<User> userOpt = userEmailDao.findByEmail(email);
+        Optional<User> userOpt = userEmailDao.findFirstByEmailIgnoreCase(email);
         if (!userOpt.isPresent()) {
             // Return generic message to avoid user enumeration
             response.put("status", true);
@@ -64,6 +65,7 @@ public class PasswordResetController {
             emailService.sendPasswordResetCode(email, code);
         } catch (Exception ex) {
             System.err.println("[FoodDoor] Failed to send reset email: " + ex.getMessage());
+            ex.printStackTrace();
             response.put("status", false);
             response.put("msg", "Could not send email. Please try again.");
             return ResponseEntity.ok(response);
@@ -104,16 +106,17 @@ public class PasswordResetController {
             return ResponseEntity.ok(response);
         }
 
-        Optional<User> userOpt = userEmailDao.findByEmail(email);
-        if (!userOpt.isPresent()) {
+        List<User> users = userEmailDao.findAllByEmailIgnoreCase(email);
+        if (users.isEmpty()) {
             response.put("status", false);
             response.put("msg", "Invalid or expired code.");
             return ResponseEntity.ok(response);
         }
 
-        User user = userOpt.get();
-        user.setPassword(newPwd);
-        userEmailDao.save(user);
+        for (User user : users) {
+            user.setPassword(newPwd);
+            userEmailDao.save(user);
+        }
 
         tokenRepository.deleteByEmail(email);
 

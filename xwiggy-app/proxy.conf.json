@@ -1,0 +1,17 @@
+{
+  "/password-reset": { "target": "http://localhost:8080", "secure": false },
+  "/login": { "target": "http://localhost:8080", "secure": false },
+  "/register": { "target": "http://localhost:8080", "secure": false },
+  "/checkUserName": { "target": "http://localhost:8080", "secure": false },
+  "/menu": { "target": "http://localhost:8080", "secure": false },
+  "/profile": { "target": "http://localhost:8080", "secure": false },
+  "/orders": { "target": "http://localhost:8080", "secure": false },
+  "/promo": { "target": "http://localhost:8080", "secure": false },
+  "/stock": { "target": "http://localhost:8080", "secure": false },
+  "/contact": { "target": "http://localhost:8080", "secure": false },
+  "/addToCart": { "target": "http://localhost:8080", "secure": false },
+  "/addNewItem": { "target": "http://localhost:8080", "secure": false },
+  "/addNewItemUrl": { "target": "http://localhost:8080", "secure": false },
+  "/checkItemId": { "target": "http://localhost:8080", "secure": false },
+  "/changeDB": { "target": "http://localhost:8080", "secure": false }
+}

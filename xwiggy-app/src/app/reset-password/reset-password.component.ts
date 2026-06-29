@@ -66,7 +66,15 @@ export class ResetPasswordComponent implements OnInit {
       },
       err => {
         this.loading = false;
-        this.errorMessage = 'Could not connect to the server. Please try again.';
+        if (err.status === 0) {
+          this.errorMessage = 'Could not reach the server. Please try again.';
+        } else if (err.status >= 500) {
+          this.errorMessage = 'The server encountered an error. Please try again.';
+        } else if (err.error && err.error.msg) {
+          this.errorMessage = err.error.msg;
+        } else {
+          this.errorMessage = 'Something went wrong. Please try again.';
+        }
       }
     );
   }
