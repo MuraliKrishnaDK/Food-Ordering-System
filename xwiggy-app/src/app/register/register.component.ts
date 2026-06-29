@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AppComponent, User } from "../app.component";
-import { HttpClient } from "@angular/common/http";
-import { Router } from "@angular/router";
+import { AppComponent, User } from '../app.component';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { ToastService } from '../toast/toast.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -11,129 +12,65 @@ import { environment } from '../../environments/environment';
 })
 export class RegisterComponent implements OnInit {
 
-  constructor(private http:HttpClient, private router:Router) { }
+  model: User = { username:'', password:'', firstname:'', lastname:'', email:'', address:'', phone:null, merchant:null };
+  options = 'User';
+  present: boolean = null;
+  usernameAvailability: string;
+  fontColor: string;
+  emailValidation = true;
+  passwordValidation = true;
+  submitAttempted = false;
 
-  model:User={
-    username:'',
-    password:'',
-    firstname:'',
-    lastname:'',
-    email:'',
-    address:'',
-    phone:null,
-    merchant:null
-  };
+  constructor(private http: HttpClient, private router: Router, private toast: ToastService) {}
 
-  options:string='User';
-  present:boolean = null;
-  usernameAvailability:string;
-  fontColor:string;
+  ngOnInit() { this.model.merchant = false; }
 
-  phoneValidation:boolean=true;
-  emailValidation:boolean=true;
-  passwordValidation:boolean=true;
-  submitAttempted:boolean=false;
-
-  usernamePresent():void{
-    this.fontColor='';
-    let url = `${environment.apiUrl}/checkUserName`;
-
-
-
-    this.http.post<boolean>(url,this.model.username).subscribe(
-      res=>{
-        this.present=res;
-        console.log(this.present);
-        if(this.present) {
-          this.fontColor="red";
-          this.usernameAvailability = "UserName Already Taken";
-        }
-        else {
-          this.fontColor="green";
-          this.usernameAvailability = "Available";
-        }
-        this.router.navigate(['register']);
-      }
-    )
+  usernamePresent(): void {
+    this.fontColor = '';
+    this.http.post<boolean>(`${environment.apiUrl}/checkUserName`, this.model.username).subscribe(res => {
+      this.present = res;
+      if (this.present) { this.fontColor = 'red';   this.usernameAvailability = 'Username already taken'; }
+      else              { this.fontColor = 'green';  this.usernameAvailability = 'Available'; }
+    });
   }
 
-  updateSelect(){
-      if (this.options) {
-        this.model.merchant = this.options.length !== 4;
-      } else {
-        this.model.merchant = false;
-      }
+  updateSelect() {
+    this.model.merchant = this.options === 'Merchant';
   }
 
-  checkPhone()
-  {
-    if (this.model.phone == null || String(this.model.phone).trim() === '') {
-      this.phoneValidation = false;
-      return;
-    }
-    const phoneStr = String(this.model.phone).replace(/\D/g, '');
-    this.phoneValidation = phoneStr.length === 10;
+  checkEmail() {
+    if (!this.model.email.length) { this.emailValidation = true; return; }
+    this.emailValidation = this.model.email.includes('@');
   }
 
-  checkEmail(){
-    if(this.model.email.length==0)
-    {
-      this.emailValidation=true;
-    }
-    if(this.model.email.length>0 &&(this.model.email).indexOf("@")==-1)
-      this.emailValidation=false;
-    if(this.model.email.length>0 &&(this.model.email).indexOf("@")!=-1)
-      this.emailValidation=true;
-  }
-
-  passwordStrength(){
-    if(this.model.password.length==0)
-      this.passwordValidation=true;
-    if(this.model.password.length<8)
-      this.passwordValidation=false;
-    if(this.model.password.length>=8)
-    {
-      let matcher = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])(?=.{8,16})');
-      this.passwordValidation=matcher.test(this.model.password);
-    }
+  passwordStrength() {
+    if (!this.model.password.length) { this.passwordValidation = true; return; }
+    if (this.model.password.length < 8) { this.passwordValidation = false; return; }
+    const m = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,16})/.test(this.model.password);
+    this.passwordValidation = m;
   }
 
   onSubmit(form: any): void {
     this.submitAttempted = true;
-    this.checkPhone();
     this.checkEmail();
     this.passwordStrength();
-
-    if (!this.emailValidation || !this.phoneValidation || !this.passwordValidation || !form.form.valid) {
+    if (!this.emailValidation || !this.passwordValidation || !form.form.valid) {
       const errors: string[] = [];
-      if (!this.emailValidation) errors.push('Enter a valid email address (must contain @)');
-      if (!this.phoneValidation) errors.push('Enter a valid 10-digit phone number');
-      if (!this.passwordValidation) errors.push('Password must be 8-16 chars with: 1 uppercase, 1 lowercase, 1 number, 1 special character (!@#$%^&*)');
-      alert('Please fix the following:\n\n' + errors.join('\n'));
+      if (!this.emailValidation)    errors.push('Enter a valid email address (must contain @)');
+      if (!this.passwordValidation) errors.push('Password: 8–16 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character');
+      this.toast.error(errors.join(' • '));
       return;
     }
-
     this.registerUser();
   }
 
-  registerUser():void{
+  registerUser(): void {
     this.updateSelect();
-
-    let url = `${environment.apiUrl}/register`;
-    this.http.post<User>(url,this.model).subscribe(
-      res=>{
-        AppComponent.modelUser =res;
-        this.router.navigate(['welcome']);
-      },
-      err=>{
-        console.log([this.model]);
-        alert("An error has occurred while Registering");
-      }
-    )
+    this.model.address = 'Not provided';
+    this.model.phone = 0;
+    this.http.post<User>(`${environment.apiUrl}/register`, this.model).subscribe(
+      res => { AppComponent.modelUser = res; this.router.navigate(['welcome']); },
+      () => this.toast.error('An error occurred during registration. Please try again.')
+    );
   }
-
-  ngOnInit() {
-    this.model.merchant = false;
-  }
-
 }

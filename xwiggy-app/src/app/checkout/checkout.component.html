@@ -1,112 +1,177 @@
-<div class="body checkout-page">
+<div class="checkout-page">
   <h1 class="checkout-title">Checkout</h1>
 
-  <div class="checkout-layout">
-    <section class="orders-panel">
-      <h2 class="orders-title">Your Orders</h2>
+  <div class="checkout-outer-box">
+    <div class="checkout-columns">
 
-      <div class="orders-header-row">
-        <span>Item</span>
-        <span>Qty</span>
-        <span>Total</span>
-      </div>
+      <!-- Left column: orders + special instructions -->
+      <div class="checkout-left">
 
-      <div class="order-row" *ngFor="let order of lineItems">
-        <span class="order-name">{{order.name}}</span>
-        <span class="order-qty">
-          <button type="button" class="qty-btn" (click)="decreaseQuantity(order)">-</button>
-          <span class="qty-value">{{order.quantity}}</span>
-          <button type="button" class="qty-btn" (click)="increaseQuantity(order)">+</button>
-        </span>
-        <span class="order-total">${{order.lineTotal.toFixed(2)}}</span>
-      </div>
+        <section class="checkout-tile orders-panel">
+          <h2 class="tile-title">Your Orders</h2>
 
-      <div class="grand-total-row">
-        <span class="grand-label">Grand Total</span>
-        <span class="grand-value">${{grandTotal.toFixed(2)}}</span>
-      </div>
-    </section>
-
-    <section class="payment-panel">
-      <h2 class="payment-title">Payment Details</h2>
-      <div class="payment-form-wrap">
-
-        <!-- Validation error summary -->
-        <div *ngIf="validationErrors.length > 0" class="validation-summary">
-          <ul>
-            <li *ngFor="let err of validationErrors">{{ err }}</li>
-          </ul>
-        </div>
-
-        <div class="pay-field">
-          <label>Card Number</label>
-          <input type="text" placeholder="e.g. 4111 1111 1111 1111"
-                 maxlength="19"
-                 [(ngModel)]="cardNumber"
-                 (input)="validCard()"
-                 [class.input-valid]="cardNumberVal === true"
-                 [class.input-invalid]="cardNumberVal === false">
-          <span class="field-hint" *ngIf="cardNumberVal === false">
-            Invalid card number. Please check and re-enter.
-          </span>
-          <span class="field-hint valid-hint" *ngIf="cardNumberVal === true">
-            ✓ Card number looks valid.
-          </span>
-        </div>
-
-        <div class="pay-field expiry-row">
-          <div class="expiry-item">
-            <label>Month (MM)</label>
-            <input type="number" placeholder="MM" min="1" max="12"
-                   [(ngModel)]="month"
-                   (input)="validMonth()"
-                   [class.input-valid]="monthVal === true"
-                   [class.input-invalid]="monthVal === false">
-            <span class="field-hint" *ngIf="monthVal === false">Invalid month.</span>
+          <div class="orders-header-row">
+            <span>Item</span>
+            <span>Qty</span>
+            <span>Total</span>
+            <span></span>
           </div>
-          <div class="expiry-item">
-            <label>Year (YY)</label>
-            <input type="number" placeholder="YY" min="0" max="99"
-                   [(ngModel)]="year"
-                   (input)="validYear()"
-                   [class.input-valid]="yearVal === true"
-                   [class.input-invalid]="yearVal === false">
-            <span class="field-hint" *ngIf="yearVal === false">Invalid or past year.</span>
+
+          <div *ngIf="lineItems.length === 0" class="empty-cart-msg">
+            Your cart is empty. <a routerLink="/menu" class="back-to-menu">Add items from the menu.</a>
           </div>
-        </div>
 
-        <div class="pay-field">
-          <label>CVV <span class="cvv-hint">(3 or 4 digits on back of card)</span></label>
-          <input type="password" placeholder="CVV" maxlength="4"
-                 [(ngModel)]="cvv"
-                 (input)="validCvv()"
-                 [class.input-valid]="cvvVal === true"
-                 [class.input-invalid]="cvvVal === false">
-          <span class="field-hint" *ngIf="cvvVal === false">CVV must be 3 or 4 digits.</span>
-        </div>
+          <div class="order-row" *ngFor="let order of lineItems">
+            <span class="order-name">{{order.name}}</span>
+            <span class="order-qty">
+              <button type="button" class="qty-btn" (click)="decreaseQuantity(order)">-</button>
+              <span class="qty-value">{{order.quantity}}</span>
+              <button type="button" class="qty-btn" (click)="increaseQuantity(order)">+</button>
+            </span>
+            <span class="order-total">${{order.lineTotal.toFixed(2)}}</span>
+            <button type="button" class="remove-btn" (click)="removeItem(order)" title="Remove item" aria-label="Remove item">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
 
-        <div class="pay-field">
-          <label>Cardholder Name</label>
-          <input type="text" placeholder="Name as on card" maxlength="26"
-                 [(ngModel)]="nameOnCard"
-                 (input)="validName()"
-                 [class.input-valid]="nameOnCardVal === true"
-                 [class.input-invalid]="nameOnCardVal === false">
-          <span class="field-hint" *ngIf="nameOnCardVal === false">
-            Letters only, 2–26 characters.
-          </span>
-        </div>
+          <div class="grand-total-row">
+            <span class="grand-label">Subtotal</span>
+            <span class="grand-value">${{grandTotal.toFixed(2)}}</span>
+            <span></span><span></span>
+          </div>
+          <div class="grand-total-row promo-row" *ngIf="promoApplied">
+            <span class="promo-label">Discount</span>
+            <span class="promo-value">-${{promoDiscount.toFixed(2)}}</span>
+            <span></span>
+            <button type="button" class="remove-btn" (click)="removePromo()" title="Remove promo">×</button>
+          </div>
+          <div class="grand-total-row final-total-row">
+            <span class="grand-label">Total to Pay</span>
+            <span class="grand-value final-total">${{finalTotal.toFixed(2)}}</span>
+            <span></span><span></span>
+          </div>
 
-        <div class="payment-actions">
-          <button class="bigbutton pay-btn"
-                  [routerLink]="(cardNumberVal && monthVal && yearVal && cvvVal && nameOnCardVal) ? ['/success'] : null"
-                  (click)="changeDB()">
-            <span>Pay ${{ grandTotal.toFixed(2) }}</span>
-          </button>
-        </div>
+          <div class="promo-section">
+            <div class="promo-input-row">
+              <input type="text" class="promo-input" placeholder="Promo code (e.g. WELCOME10)"
+                     [(ngModel)]="promoCode" [disabled]="promoApplied" />
+              <button type="button" class="promo-btn" (click)="applyPromo()" [disabled]="promoApplied || !promoCode.trim()">
+                Apply
+              </button>
+            </div>
+            <div class="promo-msg success" *ngIf="promoMessage">✓ {{ promoMessage }}</div>
+            <div class="promo-msg error"   *ngIf="promoError">{{ promoError }}</div>
+          </div>
+        </section>
+
+        <section class="checkout-tile instructions-panel">
+          <h2 class="tile-title">Special Instructions</h2>
+
+          <div *ngIf="instructionItems.length === 0" class="instructions-empty">
+            No special instructions added. Add notes from the item popup on the menu.
+          </div>
+
+          <div class="instruction-item" *ngFor="let row of instructionItems">
+            <p class="instruction-item-name">{{ row.name }}</p>
+            <p class="instruction-item-text">{{ row.specialInstructions }}</p>
+          </div>
+        </section>
+
       </div>
-    </section>
+
+      <!-- Right column: payment -->
+      <div class="checkout-right">
+        <section class="checkout-tile payment-panel">
+          <h2 class="tile-title">Payment Details</h2>
+          <div class="payment-form-wrap">
+
+            <div *ngIf="validationErrors.length > 0" class="validation-summary">
+              <ul>
+                <li *ngFor="let err of validationErrors">{{ err }}</li>
+              </ul>
+            </div>
+
+            <div class="pay-field">
+              <label>Card Number</label>
+              <input type="text" placeholder="e.g. 4111 1111 1111 1111"
+                     maxlength="19"
+                     [(ngModel)]="cardNumber"
+                     (input)="validCard()"
+                     [class.input-valid]="cardNumberVal === true"
+                     [class.input-invalid]="cardNumberVal === false">
+              <span class="field-hint" *ngIf="cardNumberVal === false">
+                Invalid card number. Please check and re-enter.
+              </span>
+              <span class="field-hint valid-hint" *ngIf="cardNumberVal === true">
+                ✓ Card number looks valid.
+              </span>
+            </div>
+
+            <div class="pay-field expiry-row">
+              <div class="expiry-item">
+                <label>Month (MM)</label>
+                <input type="number" placeholder="MM" min="1" max="12"
+                       [(ngModel)]="month"
+                       (input)="validMonth()"
+                       [class.input-valid]="monthVal === true"
+                       [class.input-invalid]="monthVal === false">
+                <span class="field-hint" *ngIf="monthVal === false">Invalid month.</span>
+              </div>
+              <div class="expiry-item">
+                <label>Year (YY)</label>
+                <input type="number" placeholder="YY" min="0" max="99"
+                       [(ngModel)]="year"
+                       (input)="validYear()"
+                       [class.input-valid]="yearVal === true"
+                       [class.input-invalid]="yearVal === false">
+                <span class="field-hint" *ngIf="yearVal === false">Invalid or past year.</span>
+              </div>
+            </div>
+
+            <div class="pay-field">
+              <label>CVV <span class="cvv-hint">(3 or 4 digits on back of card)</span></label>
+              <input type="password" placeholder="CVV" maxlength="4"
+                     [(ngModel)]="cvv"
+                     (input)="validCvv()"
+                     [class.input-valid]="cvvVal === true"
+                     [class.input-invalid]="cvvVal === false">
+              <span class="field-hint" *ngIf="cvvVal === false">CVV must be 3 or 4 digits.</span>
+            </div>
+
+            <div class="pay-field">
+              <label>Cardholder Name</label>
+              <input type="text" placeholder="Name as on card" maxlength="26"
+                     [(ngModel)]="nameOnCard"
+                     (input)="validName()"
+                     [class.input-valid]="nameOnCardVal === true"
+                     [class.input-invalid]="nameOnCardVal === false">
+              <span class="field-hint" *ngIf="nameOnCardVal === false">
+                Letters only, 2–26 characters.
+              </span>
+            </div>
+
+            <div class="payment-actions">
+              <button type="button" class="bigbutton pay-btn"
+                      [disabled]="processingPayment"
+                      (click)="placeOrder()">
+                <span>{{ processingPayment ? 'Processing…' : 'Pay $' + finalTotal.toFixed(2) }}</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div>
   </div>
 </div>
 
-
+<!-- Order Placed popup -->
+<div class="order-placed-overlay" *ngIf="showOrderPlacedPopup">
+  <div class="order-placed-modal">
+    <div class="order-placed-icon">✓</div>
+    <h2>Order Placed</h2>
+    <p *ngIf="placedOrderId">Your order #{{ placedOrderId }} has been placed successfully.</p>
+    <p *ngIf="!placedOrderId">Your order has been placed successfully.</p>
+    <p class="order-placed-sub">Redirecting to your orders…</p>
+  </div>
+</div>

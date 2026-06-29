@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { AppComponent, User } from "../app.component";
-import { HttpClient } from "@angular/common/http";
-import { Router } from "@angular/router";
-import { CartService } from "../cart.service";
+import { AppComponent, User } from '../app.component';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { CartService } from '../cart.service';
+import { ToastService } from '../toast/toast.service';
 import { environment } from '../../environments/environment';
 
 interface CartItemMeta {
   name: string;
   basePrice: number;
+  specialInstructions?: string;
 }
 
 interface CheckoutLineItem {
@@ -16,6 +18,7 @@ interface CheckoutLineItem {
   quantity: number;
   unitPrice: number;
   lineTotal: number;
+  specialInstructions?: string;
 }
 
 @Component({
@@ -25,11 +28,12 @@ interface CheckoutLineItem {
 })
 export class CheckoutComponent implements OnInit {
 
-  constructor(private http:HttpClient, private router:Router, private cartService: CartService) { }
+  constructor(private http: HttpClient, private router: Router, private cartService: CartService, private toast: ToastService) {}
 
   user:User = AppComponent.modelUser;
   total:string;
   lineItems: CheckoutLineItem[] = [];
+  instructionItems: CheckoutLineItem[] = [];
   grandTotal = 0;
   cardNumberVal:boolean=null;
   monthVal:boolean=null;
@@ -37,19 +41,28 @@ export class CheckoutComponent implements OnInit {
   cvvVal:boolean=null;
   nameOnCardVal:boolean=null;
 
-  cardNumber:string;
-  month:number;
-  year:number;
-  cvv:number;
-  nameOnCard:string;
+  cardNumber: string;
+  month: number;
+  year: number;
+  cvv: number;
+  nameOnCard: string;
+
+  promoCode = '';
+  promoApplied = false;
+  promoMessage: string = null;
+  promoError: string = null;
+  promoDiscount = 0;
+  finalTotal = 0;
+  processingPayment = false;
+  showOrderPlacedPopup = false;
+  placedOrderId: number = null;
 
 
   ngOnInit() {
-    if (sessionStorage.getItem("userData") == null) {
-      this.router.navigate(['login']);
-    }
-    this.total=sessionStorage.getItem('total');
+    if (sessionStorage.getItem('userData') == null) { this.router.navigate(['login']); }
+    this.total = sessionStorage.getItem('total');
     this.loadOrderSummary();
+    this.finalTotal = this.grandTotal;
   }
 
   private loadOrderSummary(): void {
@@ -93,7 +106,8 @@ export class CheckoutComponent implements OnInit {
           name: meta ? meta.name : inferredName,
           quantity,
           unitPrice,
-          lineTotal
+          lineTotal,
+          specialInstructions: meta ? meta.specialInstructions : undefined
         } as CheckoutLineItem;
       })
       .filter((item): item is CheckoutLineItem => item !== null);
@@ -103,6 +117,14 @@ export class CheckoutComponent implements OnInit {
       : storedTotal;
 
     this.syncCartCount();
+    this.finalTotal = this.grandTotal;
+    this.updateInstructionItems();
+  }
+
+  private updateInstructionItems(): void {
+    this.instructionItems = this.lineItems.filter(
+      item => item.specialInstructions && item.specialInstructions.trim().length > 0
+    );
   }
 
   private getItemNameFromKey(key: string): string {
@@ -121,8 +143,7 @@ export class CheckoutComponent implements OnInit {
 
   decreaseQuantity(item: CheckoutLineItem): void {
     if (item.quantity <= 1) {
-      this.lineItems = this.lineItems.filter((row) => row.key !== item.key);
-      this.persistCheckoutCart();
+      this.removeItem(item);
       return;
     }
     item.quantity -= 1;
@@ -130,17 +151,72 @@ export class CheckoutComponent implements OnInit {
     this.persistCheckoutCart();
   }
 
+  applyPromo(): void {
+    if (!this.promoCode.trim()) { return; }
+    const total = this.grandTotal;
+    this.http.post<any>(`${environment.apiUrl}/promo/validate`, { code: this.promoCode, total }).subscribe(
+      res => {
+        if (res.valid) {
+          this.promoApplied = true;
+          this.promoDiscount = res.discount;
+          this.finalTotal = res.newTotal;
+          this.promoMessage = res.message;
+          this.promoError = null;
+          this.toast.success(`Promo applied: ${res.label}`);
+        } else {
+          this.promoApplied = false;
+          this.promoDiscount = 0;
+          this.finalTotal = this.grandTotal;
+          this.promoError = res.message;
+          this.promoMessage = null;
+        }
+      },
+      () => {
+        this.promoError = 'Could not validate promo code. Try again.';
+        this.promoMessage = null;
+      }
+    );
+  }
+
+  removePromo(): void {
+    this.promoCode = '';
+    this.promoApplied = false;
+    this.promoDiscount = 0;
+    this.finalTotal = this.grandTotal;
+    this.promoMessage = null;
+    this.promoError = null;
+  }
+
+  removeItem(item: CheckoutLineItem): void {
+    this.lineItems = this.lineItems.filter((row) => row.key !== item.key);
+    this.persistCheckoutCart();
+  }
+
   private persistCheckoutCart(): void {
     const nextCartMap: { [key: string]: number } = {};
+    const nextMetaMap: { [key: string]: CartItemMeta } = {};
+    const rawMeta = sessionStorage.getItem('fdCartMetaMap');
+    let existingMeta: { [key: string]: CartItemMeta } = {};
+    if (rawMeta) {
+      try { existingMeta = JSON.parse(rawMeta); } catch { existingMeta = {}; }
+    }
+
     this.lineItems.forEach((item) => {
       nextCartMap[item.key] = item.quantity;
+      nextMetaMap[item.key] = {
+        name: item.name,
+        basePrice: item.unitPrice,
+        specialInstructions: item.specialInstructions || (existingMeta[item.key] && existingMeta[item.key].specialInstructions)
+      };
     });
 
     this.grandTotal = +this.lineItems.reduce((sum, item) => sum + item.lineTotal, 0).toFixed(2);
     this.total = this.grandTotal.toFixed(2);
     sessionStorage.setItem('fdCartMap', JSON.stringify(nextCartMap));
+    sessionStorage.setItem('fdCartMetaMap', JSON.stringify(nextMetaMap));
     sessionStorage.setItem('total', this.total);
     this.syncCartCount();
+    this.updateInstructionItems();
   }
 
   private syncCartCount(): void {
@@ -233,7 +309,7 @@ export class CheckoutComponent implements OnInit {
 
   validationErrors: string[] = [];
 
-  changeDB(): void {
+  placeOrder(): void {
     this.validCard();
     this.validMonth();
     this.validYear();
@@ -260,11 +336,72 @@ export class CheckoutComponent implements OnInit {
 
     if (this.validationErrors.length > 0) return;
 
-    const url = `${environment.apiUrl}/changeDB`;
-    this.http.get(url).subscribe(
-      () => console.log('DB Updated'),
-      () => alert('Failed to update. Please try again.')
+    if (this.lineItems.length === 0) {
+      this.toast.error('Your cart is empty.');
+      return;
+    }
+
+    const userRaw = sessionStorage.getItem('userData');
+    if (!userRaw) {
+      this.router.navigate(['login']);
+      return;
+    }
+
+    this.processingPayment = true;
+    const userData = JSON.parse(userRaw);
+    const items = this.lineItems.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      lineTotal: item.lineTotal,
+      specialInstructions: item.specialInstructions
+    }));
+
+    const orderPayload = {
+      username: userData.username,
+      items: JSON.stringify(items),
+      total: this.finalTotal
+    };
+
+    this.http.get(`${environment.apiUrl}/changeDB`).subscribe(
+      () => {
+        this.http.post<any>(`${environment.apiUrl}/orders`, orderPayload).subscribe(
+          (res) => {
+            this.processingPayment = false;
+            if (res && res.status) {
+              this.placedOrderId = res.orderId;
+              sessionStorage.setItem('highlightOrderId', String(res.orderId));
+              this.clearCartAfterOrder();
+              this.showOrderPlacedPopup = true;
+              setTimeout(() => {
+                this.router.navigate(['/orderHistory']);
+              }, 2200);
+            } else {
+              this.toast.error('Order could not be placed. Please try again.');
+            }
+          },
+          () => {
+            this.processingPayment = false;
+            this.toast.error('Order could not be placed. Please try again.');
+          }
+        );
+      },
+      () => {
+        this.processingPayment = false;
+        this.toast.error('Payment processing failed. Please try again.');
+      }
     );
+  }
+
+  private clearCartAfterOrder(): void {
+    this.cartService.clearCart();
+    sessionStorage.removeItem('fdCartMap');
+    sessionStorage.removeItem('fdCartMetaMap');
+    sessionStorage.removeItem('total');
+    this.lineItems = [];
+    this.instructionItems = [];
+    this.grandTotal = 0;
+    this.finalTotal = 0;
   }
 
 

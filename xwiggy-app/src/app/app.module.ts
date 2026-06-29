@@ -24,6 +24,9 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { AuthGuard } from './guards/auth.guard';
 import { MerchantGuard } from './guards/merchant.guard';
+import { CartGuard } from './guards/cart.guard';
+import { ToastComponent } from './toast/toast.component';
+import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
 
 const appRoutes: Routes = [
   { path: 'login',           component: LoginComponent },
@@ -31,7 +34,7 @@ const appRoutes: Routes = [
   { path: 'welcome',         component: WelcomeComponent,        canActivate: [AuthGuard] },
   { path: 'menu',            component: MenuComponent,           canActivate: [AuthGuard] },
   { path: 'home',            component: HomeComponent },
-  { path: 'checkout',        component: CheckoutComponent,       canActivate: [AuthGuard] },
+  { path: 'checkout',        component: CheckoutComponent,       canActivate: [AuthGuard, CartGuard] },
   { path: 'success',         component: SuccessComponent,        canActivate: [AuthGuard] },
   { path: 'merchantWelcome', component: MerchantWelcomeComponent, canActivate: [MerchantGuard] },
   { path: 'merchantMenu',    component: MerchantMenuComponent,   canActivate: [MerchantGuard] },
@@ -64,6 +67,8 @@ const appRoutes: Routes = [
     ResetPasswordComponent,
     NotFoundComponent,
     OrderHistoryComponent,
+    ToastComponent,
+    CartSidebarComponent,
   ],
   imports: [
     BrowserModule,
@@ -72,7 +77,7 @@ const appRoutes: Routes = [
     HttpClientModule,
     AppRoutingModule
   ],
-  providers: [AuthGuard, MerchantGuard],
+  providers: [AuthGuard, MerchantGuard, CartGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

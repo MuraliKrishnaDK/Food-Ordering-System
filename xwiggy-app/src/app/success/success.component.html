@@ -1,36 +1,56 @@
-<div class="body">
-  <br><br><br><br>
-  <h1 align="center">Orders</h1>
-  <div class="alert alert-warning" align="center" style="width: 100%">
-    <strong>Payment Successful.</strong>
+<div class="body success-page">
+
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h1 class="success-title">Payment Successful!</h1>
+
+    <div *ngIf="saving" class="saving-msg">Saving your order…</div>
+
+    <div *ngIf="!saving && orderId" class="order-ref">
+      Order <strong>#{{ orderId }}</strong> placed successfully.
+    </div>
+
+    <!-- Order status tracker -->
+    <div class="tracker">
+      <div class="tracker-step active">
+        <div class="step-dot filled"></div>
+        <div class="step-label">Order Placed</div>
+      </div>
+      <div class="tracker-line"></div>
+      <div class="tracker-step">
+        <div class="step-dot"></div>
+        <div class="step-label">Confirmed</div>
+      </div>
+      <div class="tracker-line"></div>
+      <div class="tracker-step">
+        <div class="step-dot"></div>
+        <div class="step-label">Preparing</div>
+      </div>
+      <div class="tracker-line"></div>
+      <div class="tracker-step">
+        <div class="step-dot"></div>
+        <div class="step-label">On the Way</div>
+      </div>
+      <div class="tracker-line"></div>
+      <div class="tracker-step">
+        <div class="step-dot"></div>
+        <div class="step-label">Delivered</div>
+      </div>
+    </div>
+
+    <p class="eta-msg">🕐 Estimated delivery time: <strong>30–45 minutes</strong></p>
+
+    <div class="success-actions">
+      <button class="bigbutton action-btn" (click)="goToHistory()">
+        <span>Track Order</span>
+      </button>
+      <button class="bigbutton action-btn secondary-btn" (click)="goToMenu()">
+        <span>Back to Menu</span>
+      </button>
+      <button class="bigbutton action-btn secondary-btn" routerLink="/contactUs">
+        <span>Contact Us</span>
+      </button>
+    </div>
   </div>
-  <br><br><br>
-  <h1 align="center">Your order is on it's way.</h1>
-  <!--<div align="center"><progress value="22" max="100" style="width: 70%"> Progress</progress> </div>-->
 
-<div align="center">
-  <div class="progress">
-    <div class="progress-bar bg-success" style="width:40%">
-      Payment Status : Accepted
-    </div>
-    <div class="progress-bar bg-warning" style="width:40%">
-      Order Status : Accepted
-    </div>
-    <div class="progress-bar bg-danger" style="width:40%">
-      Delivery Time : 30 mins
-    </div>
-  </div>
 </div>
-
-
-  <br><br><br><br>
-  <table align="center">
-    <tr>
-      <td><button class="bigbutton" routerLink="/contactUs" style="width: 140px"><span>Contact Us</span></button> </td>
-      <td><button class="bigbutton" routerLink="/menu"><span>Menu</span></button> </td>
-      <td></td>
-    </tr>
-  </table>
-</div>
-
-

@@ -3,18 +3,40 @@ package com.xwiggy.food.model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "app_user")
 public class User {
 
     @Id
+    @NotBlank(message = "Username is required")
+    @Size(min = 3, max = 45, message = "Username must be 3-45 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username may only contain letters, digits, and underscores")
     private String username;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 64, message = "Password must be 8-64 characters")
     private String password;
+
+    @NotBlank(message = "First name is required")
+    @Size(max = 45, message = "First name max 45 characters")
     private String firstname;
+
+    @Size(max = 45, message = "Last name max 45 characters")
     private String lastname;
+
+    @Email(message = "Must be a valid email address")
+    @Size(max = 100, message = "Email max 100 characters")
     private String email;
+
+    @NotBlank(message = "Address is required")
+    @Size(max = 100, message = "Address max 100 characters")
     private String address;
+
     private long phone;
     private boolean merchant;
 

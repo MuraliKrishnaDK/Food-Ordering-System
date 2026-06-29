@@ -15,6 +15,28 @@ public class EmailService {
     @Value("${spring.mail.username:}")
     private String fromEmail;
 
+    public void sendOrderConfirmation(String toEmail, Long orderId, String items, double total) {
+        if (mailSender == null) {
+            System.out.println("[FoodDoor] SMTP not configured. Order confirmation for "
+                    + toEmail + " — Order #" + orderId + " total $" + total);
+            return;
+        }
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(toEmail);
+        message.setSubject("FoodDoor — Order #" + orderId + " Confirmed!");
+        message.setText(
+                "Hi!\n\n"
+                + "Your FoodDoor order has been placed successfully.\n\n"
+                + "Order ID : #" + orderId + "\n"
+                + "Items    : " + items + "\n"
+                + "Total    : $" + String.format("%.2f", total) + "\n\n"
+                + "Your order is being prepared and will arrive in 30–45 minutes.\n\n"
+                + "Thank you for ordering with FoodDoor!"
+        );
+        mailSender.send(message);
+    }
+
     public void sendPasswordResetCode(String toEmail, String code) {
         if (mailSender == null) {
             System.out.println("[FoodDoor] SMTP not configured. Password reset code for "

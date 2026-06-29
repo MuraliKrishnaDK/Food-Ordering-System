@@ -1,0 +1,16 @@
+<div class="toast-container">
+  <div class="toast"
+       *ngFor="let t of toasts"
+       [class]="'toast toast-' + t.type">
+    <span class="toast-icon">
+      <ng-container [ngSwitch]="t.type">
+        <span *ngSwitchCase="'success'">✓</span>
+        <span *ngSwitchCase="'error'">✕</span>
+        <span *ngSwitchCase="'warning'">⚠</span>
+        <span *ngSwitchDefault>ℹ</span>
+      </ng-container>
+    </span>
+    <span class="toast-msg">{{ t.message }}</span>
+    <button class="toast-close" (click)="dismiss(t.id)">×</button>
+  </div>
+</div>

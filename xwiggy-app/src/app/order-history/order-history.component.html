@@ -1,3 +1,147 @@
-<p>
-  order-history works!
-</p>
+<div class="history-page">
+  <h1 class="page-title">My Orders</h1>
+
+  <div *ngIf="loading" class="state-msg">Loading your orders…</div>
+  <div *ngIf="error"   class="state-msg error-msg">{{ error }}</div>
+
+  <div *ngIf="!loading && orders.length === 0 && !error" class="state-msg">
+    No orders yet. <a routerLink="/menu" class="link">Browse the menu</a> to place your first order!
+  </div>
+
+  <div class="orders-container" *ngIf="!loading && orders.length > 0">
+
+    <!-- Current Orders — card UI -->
+    <section *ngIf="currentOrders.length > 0" class="orders-section">
+      <h2 class="section-heading">Current Orders</h2>
+      <p class="section-sub">Active orders in progress, newest first</p>
+      <div class="orders-list">
+        <div class="order-card"
+             *ngFor="let order of currentOrders"
+             [class.order-highlight]="order.id === highlightOrderId">
+          <div class="order-header" (click)="toggleExpand(order)">
+            <div class="order-meta">
+              <span class="order-id">Order #{{ order.id }}</span>
+              <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+            </div>
+            <div class="order-right">
+              <span class="order-total">${{ order.total?.toFixed(2) }}</span>
+              <span class="status-badge" [style.background]="statusColors[getDisplayStatus(order)]">
+                {{ statusLabels[getDisplayStatus(order)] || getDisplayStatus(order) }}
+              </span>
+              <span class="expand-icon">{{ order.expanded ? '▲' : '▼' }}</span>
+            </div>
+          </div>
+
+          <!-- Delivery code -->
+          <div class="delivery-code-box">
+            <div class="delivery-code-left">
+              <span class="delivery-code-label">Delivery code</span>
+              <span class="delivery-code-hint">Tell this to your delivery agent</span>
+            </div>
+            <span class="delivery-code-value">{{ getDeliveryCode(order) }}</span>
+          </div>
+
+          <!-- Animated status tracker -->
+          <div class="status-tracker-wrap">
+            <div class="status-progress-bar">
+              <div class="status-progress-fill" [style.width.%]="getProgressPercent(order)"></div>
+            </div>
+            <div class="status-tracker">
+              <ng-container *ngFor="let step of statusSteps; let i = index">
+                <div class="track-step"
+                     [class.done]="getStatusIndex(getDisplayStatus(order)) >= i"
+                     [class.current]="getStatusIndex(getDisplayStatus(order)) === i">
+                  <div class="track-dot"></div>
+                  <div class="track-label">{{ statusLabels[step] }}</div>
+                </div>
+                <div *ngIf="i < statusSteps.length - 1"
+                     class="track-line"
+                     [class.done]="getStatusIndex(getDisplayStatus(order)) > i">
+                </div>
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="order-items" *ngIf="order.expanded">
+            <div class="items-header">
+              <span>Item</span><span>Qty</span><span>Price</span><span>Total</span>
+            </div>
+            <div class="item-row" *ngFor="let item of order.parsedItems">
+              <span class="item-name">{{ item.name }}</span>
+              <span>{{ item.quantity }}</span>
+              <span>${{ item.unitPrice?.toFixed(2) }}</span>
+              <span>${{ item.lineTotal?.toFixed(2) }}</span>
+            </div>
+            <div class="items-footer">
+              <span>Grand Total</span>
+              <span></span><span></span>
+              <span class="grand-total">${{ order.total?.toFixed(2) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Past Orders — table format -->
+    <section *ngIf="pastOrders.length > 0" class="orders-section past-section">
+      <h2 class="section-heading">Past Orders</h2>
+      <p class="section-sub">Delivered orders, newest first</p>
+
+      <div class="past-table-wrap">
+        <table class="past-orders-table">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Date</th>
+              <th>Items</th>
+              <th>Qty</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let order of pastOrders">
+              <tr class="past-row" (click)="togglePastOrderExpand(order)">
+                <td class="past-order-id">#{{ order.id }}</td>
+                <td>{{ formatDate(order.createdAt) }}</td>
+                <td class="past-items-cell">{{ getItemSummary(order) }}</td>
+                <td>{{ getTotalItems(order) }}</td>
+                <td class="past-total">${{ order.total?.toFixed(2) }}</td>
+                <td>
+                  <span class="status-badge table-badge" [style.background]="statusColors['DELIVERED']">
+                    Delivered
+                  </span>
+                </td>
+                <td class="past-expand">{{ order.expanded ? '▲' : '▼' }}</td>
+              </tr>
+              <tr *ngIf="order.expanded" class="past-detail-row">
+                <td colspan="7">
+                  <div class="past-detail-items">
+                    <div class="past-detail-header">
+                      <span>Item</span><span>Qty</span><span>Price</span><span>Total</span>
+                    </div>
+                    <div class="past-detail-item" *ngFor="let item of order.parsedItems">
+                      <span>{{ item.name }}</span>
+                      <span>{{ item.quantity }}</span>
+                      <span>${{ item.unitPrice?.toFixed(2) }}</span>
+                      <span>${{ item.lineTotal?.toFixed(2) }}</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1 && !loading">
+    <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 0">← Prev</button>
+    <span class="page-info">Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+    <button class="page-btn" (click)="nextPage()" [disabled]="currentPage >= totalPages - 1">Next →</button>
+  </div>
+
+</div>

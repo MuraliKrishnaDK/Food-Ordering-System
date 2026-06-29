@@ -1,27 +1,69 @@
-<!--The content below is only a placeholder and can be replaced.-->
 <header *ngIf="showHeader" class="app-header">
   <div class="header-content">
-    <a routerLink="/menu" class="logo">FoodDoor</a>
+    <div class="header-left">
+      <a routerLink="/menu" class="logo">FoodDoor</a>
+      <button type="button" class="location-btn" (click)="openLocationPopup()" aria-label="Set delivery location">
+        <i class="fa fa-map-marker location-pin"></i>
+        <span class="location-address">{{ deliveryAddress || 'Set location' }}</span>
+        <i class="fa fa-chevron-down location-chevron"></i>
+      </button>
+    </div>
+
     <nav class="header-nav">
       <a routerLink="/menu" routerLinkActive="active">Menu</a>
-      <a routerLink="/checkout" class="cart-link" routerLinkActive="active">
-        <i class="fa fa-shopping-cart"></i>
-        <span class="cart-badge">{{cartCount}}</span>
-      </a>
+
       <div class="user-menu-wrap">
         <span class="user-link" aria-label="Account menu">
           <i class="fa fa-user"></i>
         </span>
         <div class="user-dropdown">
           <a *ngIf="!isMerchantUser" routerLink="/welcome" class="user-dropdown-item">Profile</a>
-          <a *ngIf="isMerchantUser" routerLink="/merchantWelcome" class="user-dropdown-item">Profile</a>
+          <a *ngIf="isMerchantUser"  routerLink="/merchantWelcome" class="user-dropdown-item">Profile</a>
+          <a *ngIf="!isMerchantUser" routerLink="/orderHistory" class="user-dropdown-item">My Orders</a>
           <a routerLink="/settings" class="user-dropdown-item">Settings</a>
           <button type="button" class="user-dropdown-item user-dropdown-logout" (click)="logout()">Logout</button>
         </div>
       </div>
+
+      <!-- Cart icon — last item, opens sidebar -->
+      <button type="button" class="cart-link cart-btn" (click)="toggleCart($event)" aria-label="Open cart">
+        <i class="fa fa-shopping-cart"></i>
+        <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+      </button>
     </nav>
   </div>
 </header>
+
+<!-- Location popup -->
+<div class="location-overlay" *ngIf="showLocationPopup" (click)="closeLocationPopup()">
+  <div class="location-modal" (click)="$event.stopPropagation()">
+    <button type="button" class="location-close" (click)="closeLocationPopup()">✕</button>
+    <h2 class="location-modal-title">Delivery location</h2>
+    <p class="location-modal-sub">Enter where you'd like your order delivered.</p>
+
+    <div class="location-field">
+      <label for="locationAddress">Address</label>
+      <div class="location-input-wrap">
+        <input id="locationAddress" type="text"
+               [(ngModel)]="locationFormAddress" />
+        <button type="button"
+                class="location-detect-btn"
+                (click)="useCurrentLocation()"
+                [disabled]="locationLoading"
+                aria-label="Use current location">
+          <i class="fa fa-crosshairs" [class.spinning]="locationLoading"></i>
+        </button>
+      </div>
+    </div>
+
+    <button type="button" class="location-save-btn" (click)="saveLocation()">Save location</button>
+  </div>
+</div>
+
+<!-- Global cart sidebar (always in DOM, hidden off-screen when closed) -->
+<app-cart-sidebar></app-cart-sidebar>
+
+<app-toast></app-toast>
 <main class="app-main">
   <router-outlet></router-outlet>
 </main>

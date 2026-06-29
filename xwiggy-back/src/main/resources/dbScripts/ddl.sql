@@ -45,6 +45,34 @@ CREATE TABLE contact (
     message TEXT
 );
 
+CREATE TABLE IF NOT EXISTS promo_code (
+    code             VARCHAR(30)    PRIMARY KEY,
+    discount_percent INTEGER        NOT NULL DEFAULT 0,
+    discount_flat    NUMERIC(8,2)   NOT NULL DEFAULT 0,
+    min_order_amount NUMERIC(8,2)   NOT NULL DEFAULT 0,
+    active           BOOLEAN        NOT NULL DEFAULT TRUE,
+    expires_on       DATE
+);
+
+CREATE TABLE IF NOT EXISTS item_stock (
+    item_name VARCHAR(200) PRIMARY KEY,
+    in_stock  BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id         BIGSERIAL    PRIMARY KEY,
+    username   VARCHAR(45)  NOT NULL,
+    items      TEXT         NOT NULL,
+    total      NUMERIC(10,2) NOT NULL,
+    status     VARCHAR(20)  NOT NULL DEFAULT 'PLACED',
+    delivery_code VARCHAR(4),
+    created_at TIMESTAMP    NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP    NOT NULL DEFAULT NOW()
+);
+
+-- Run on existing databases if column is missing:
+-- ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_code VARCHAR(4);
+
 CREATE TABLE IF NOT EXISTS password_reset_token (
     id         BIGSERIAL    PRIMARY KEY,
     token      VARCHAR(10)  NOT NULL UNIQUE,

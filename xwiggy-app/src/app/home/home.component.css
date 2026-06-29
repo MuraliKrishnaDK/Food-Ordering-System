@@ -2,8 +2,7 @@
   position: relative;
   min-height: 100vh;
   width: 100%;
-  /* Orange (left) to yellow (right) fade */
-  background: transparent;
+  background: linear-gradient(145deg, #fff6f0 0%, #ffe8d4 42%, #ffd9bc 100%);
 }
 
 .home-auth-actions {
@@ -46,6 +45,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: radial-gradient(circle at 50% 45%, rgba(244, 81, 30, 0.08) 0%, transparent 55%);
 }
 
 .home-title {
@@ -53,8 +53,8 @@
   font-size: 4rem;
   letter-spacing: 1px;
   margin: 0;
-  color: #ffffff;
-  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+  color: #f4511e;
+  text-shadow: none;
 }
 
 .body {

@@ -1,10 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('../node_modules/bootstrap/dist/css/bootstrap.min.css');
 @import url('../node_modules/font-awesome/css/font-awesome.css');
+
+*, *::before, *::after { box-sizing: border-box; }
+
 html, body {
   min-height: 100vh;
   margin: 0;
 }
 body {
-  background: linear-gradient(to right, #f07a1f 0%, #f4e425 100%);
+  background: #f4f5f7;
+}
+
+/* ── Global mobile helpers ── */
+img { max-width: 100%; height: auto; }
+
+@media (max-width: 600px) {
+  h1 { font-size: 1.5rem !important; }
+  h2 { font-size: 1.2rem !important; }
+
+  /* Menu cards: 2 columns on mobile */
+  .card-grid.categories-grid,
+  .card-grid.items-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 0 10px !important;
+  }
+
+  /* Checkout stacks vertically */
+  .checkout-layout {
+    flex-direction: column !important;
+  }
+  .orders-panel,
+  .payment-panel {
+    width: 100% !important;
+  }
+
+  /* Tracker: wrap on small screens */
+  .status-tracker,
+  .tracker {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Welcome/profile edit form */
+  .profile-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

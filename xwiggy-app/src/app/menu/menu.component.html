@@ -1,51 +1,194 @@
-<div class="body menu-page">
-  <h1 class="menu-title" align="center">Menu</h1>
+<div class="menu-page">
 
-  <div class="menu-toolbar categories-toolbar" *ngIf="!selectedCategory">
-    <p class="hint">Pick a category to explore items</p>
-  </div>
-
-  <div class="menu-toolbar category-detail-toolbar" *ngIf="selectedCategory">
-    <button type="button" class="bigbutton back-btn" (click)="backToCategories()"><span>Back</span></button>
-    <h2 class="selected-category">{{selectedCategory.emoji}} {{selectedCategory.name}}</h2>
-    <div class="toolbar-right-actions">
-      <p class="total inline-total">Cart Total: ${{total.toFixed(2)}}</p>
-      <button routerLink="/checkout" class="bigbutton"><span>Checkout</span></button>
+  <!-- ── Top bar: title + search ── -->
+  <div class="menu-topbar">
+    <h1 class="menu-title">Menu</h1>
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text"
+             class="search-input"
+             placeholder="Search across all categories…"
+             [(ngModel)]="searchQuery" />
+      <button *ngIf="searchQuery" class="search-clear" (click)="searchQuery = ''">×</button>
     </div>
   </div>
 
-  <div class="card-grid categories-grid" *ngIf="!selectedCategory">
-    <div class="menu-card category-card" *ngFor="let category of categories" (click)="selectCategory(category)">
-      <div class="category-emoji">{{category.emoji}}</div>
-      <h3>{{category.name}}</h3>
-      <p>{{category.items.length}} items</p>
-    </div>
-  </div>
+  <!-- ── Main layout ── -->
+  <div class="menu-layout">
 
-  <div class="card-grid items-grid" *ngIf="selectedCategory">
-    <div class="menu-card item-card" *ngFor="let item of selectedCategory.items; let itemIndex = index">
-      <h3>{{item.name}}</h3>
-      <img *ngIf="item.imageUrl"
-           [src]="item.imageUrl"
-           [alt]="item.name"
-           class="item-image"
-           (error)="onItemImageError($event, item)">
-      <div *ngIf="!item.imageUrl"
-           class="item-image image-placeholder"
-           [style.background]="getCategoryColor(selectedCategory?.name)">
-        <span class="placeholder-emoji">{{ selectedCategory?.emoji }}</span>
-        <span class="placeholder-name">{{ item.name }}</span>
+    <!-- Left: category list (always visible) -->
+    <aside class="category-sidebar">
+      <div class="cat-list-item"
+           *ngFor="let category of categories"
+           [class.active]="selectedCategory?.name === category.name"
+           (click)="selectCategory(category)">
+        <span class="cat-emoji">{{ category.emoji }}</span>
+        <span class="cat-name">{{ category.name }}</span>
+        <span class="cat-count">{{ category.items.length }}</span>
       </div>
-      <div class="price-counter-row">
-        <p class="price">{{item.priceText}}</p>
-        <div class="qty-stepper" aria-label="Quantity selector">
-          <button type="button" class="step-btn" (click)="decreaseItem(item, itemIndex)">-</button>
-          <span class="qty-value">{{getItemQuantity(item, itemIndex)}}</span>
-          <button type="button" class="step-btn" (click)="increaseItem(item, itemIndex)">+</button>
+    </aside>
+
+    <!-- Right: items area -->
+    <main class="items-area">
+      <div class="items-area-inner">
+
+      <!-- Search results -->
+      <ng-container *ngIf="searchQuery.trim().length > 0">
+        <div *ngIf="searchResults.length === 0" class="search-empty">
+          No items matched "<strong>{{ searchQuery }}</strong>"
         </div>
+        <div *ngIf="searchResults.length > 0" class="results-header">
+          {{ searchResults.length }} result(s) for "<strong>{{ searchQuery }}</strong>"
+        </div>
+        <div class="items-grid" *ngIf="searchResults.length > 0">
+          <div class="item-card" *ngFor="let r of searchResults">
+            <div class="search-cat-tag">{{ r.category.emoji }} {{ r.category.name }}</div>
+            <img *ngIf="r.item.imageUrl"
+                 [src]="r.item.imageUrl" [alt]="r.item.name"
+                 class="item-img item-img-clickable"
+                 (click)="openPopup(r.item, r.itemIndex, r.category, $event)"
+                 (error)="onItemImageError($event, r.item)">
+            <div *ngIf="!r.item.imageUrl"
+                 class="item-img img-placeholder item-img-clickable"
+                 [style.background]="getCategoryColor(r.category.name)"
+                 (click)="openPopup(r.item, r.itemIndex, r.category, $event)">
+              <span class="ph-emoji">{{ r.category.emoji }}</span>
+              <span class="ph-name">{{ r.item.name }}</span>
+            </div>
+            <h3 class="item-name item-name-clickable"
+                (click)="openPopup(r.item, r.itemIndex, r.category, $event)">{{ r.item.name }}</h3>
+            <div class="price-row">
+              <span class="item-price">{{ r.item.priceText }}</span>
+              <div class="qty-stepper">
+                <button class="step-btn" (click)="decreaseSearchItem(r.item, r.itemIndex, r.category)">−</button>
+                <span class="qty-val">{{ getSearchItemQuantity(r.item, r.itemIndex, r.category) }}</span>
+                <button class="step-btn" (click)="increaseSearchItem(r.item, r.itemIndex, r.category)">+</button>
+              </div>
+            </div>
+            <button class="add-btn" (click)="addSearchItemToCart(r.item, r.itemIndex, r.category)">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Category items -->
+      <ng-container *ngIf="!searchQuery.trim().length && selectedCategory">
+        <div class="category-heading">
+          <span class="cat-heading-emoji">{{ selectedCategory.emoji }}</span>
+          <h2 class="cat-heading-name">{{ selectedCategory.name }}</h2>
+          <span class="cat-heading-count">{{ selectedCategory.items.length }} items</span>
+        </div>
+
+        <div class="items-grid">
+          <div class="item-card"
+               [class.oos-card]="isOutOfStock(item.name)"
+               *ngFor="let item of selectedCategory.items; let itemIndex = index">
+            <div *ngIf="isOutOfStock(item.name)" class="oos-badge">Out of Stock</div>
+            <img *ngIf="item.imageUrl"
+                 [src]="item.imageUrl" [alt]="item.name"
+                 class="item-img item-img-clickable"
+                 (click)="openPopup(item, itemIndex, selectedCategory, $event)"
+                 (error)="onItemImageError($event, item)">
+            <div *ngIf="!item.imageUrl"
+                 class="item-img img-placeholder item-img-clickable"
+                 [style.background]="getCategoryColor(selectedCategory?.name)"
+                 (click)="openPopup(item, itemIndex, selectedCategory, $event)">
+              <span class="ph-emoji">{{ selectedCategory?.emoji }}</span>
+              <span class="ph-name">{{ item.name }}</span>
+            </div>
+            <h3 class="item-name item-name-clickable"
+                (click)="openPopup(item, itemIndex, selectedCategory, $event)">{{ item.name }}</h3>
+            <div class="price-row">
+              <span class="item-price">{{ item.priceText }}</span>
+              <div class="qty-stepper" *ngIf="!isOutOfStock(item.name)">
+                <button class="step-btn" (click)="decreaseItem(item, itemIndex)">−</button>
+                <span class="qty-val">{{ getItemQuantity(item, itemIndex) }}</span>
+                <button class="step-btn" (click)="increaseItem(item, itemIndex)">+</button>
+              </div>
+            </div>
+            <button class="add-btn"
+                    [class.add-btn-disabled]="isOutOfStock(item.name)"
+                    [disabled]="isOutOfStock(item.name)"
+                    (click)="addToCart(item, itemIndex)">
+              {{ isOutOfStock(item.name) ? 'Unavailable' : 'Add to Cart' }}
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Placeholder when no category selected -->
+      <div class="no-selection" *ngIf="!searchQuery.trim().length && !selectedCategory">
+        <p>← Pick a category to explore items</p>
       </div>
-      <button type="button" class="bigbutton add-btn" (click)="addToCart(item, itemIndex)"><span>Add to Cart</span></button>
-    </div>
+
+      </div>
+    </main>
   </div>
 
+</div>
+
+<!-- ── Item Detail Popup ── -->
+<div class="popup-overlay" *ngIf="popup" (click)="closePopup()">
+  <div class="popup-modal" (click)="$event.stopPropagation()">
+
+    <!-- Close button -->
+    <button class="popup-close" (click)="closePopup()">✕</button>
+
+    <!-- Item image -->
+    <div class="popup-img-wrap">
+      <img *ngIf="popup.item.imageUrl"
+           [src]="popup.item.imageUrl"
+           [alt]="popup.item.name"
+           class="popup-img">
+      <div *ngIf="!popup.item.imageUrl"
+           class="popup-img popup-img-placeholder"
+           [style.background]="getCategoryColor(popup.category.name)">
+        <span class="popup-ph-emoji">{{ popup.category.emoji }}</span>
+      </div>
+
+    </div>
+
+    <!-- Body -->
+    <div class="popup-body">
+      <p class="popup-category-tag">{{ popup.category.emoji }} {{ popup.category.name }}</p>
+      <h2 class="popup-item-name">{{ popup.item.name }}</h2>
+      <p class="popup-price">{{ popup.item.priceText }}</p>
+
+      <!-- Ingredients -->
+      <div class="popup-ingredients">
+        <h4 class="popup-section-title">Ingredients</h4>
+        <p class="popup-ingredients-text">{{ getIngredients(popup.item.name) }}</p>
+      </div>
+
+      <!-- Special Instructions -->
+      <div class="popup-special-instructions" *ngIf="!isItemOutOfStock(popup.item, popup.itemIndex, popup.category)">
+        <h4 class="popup-section-title">Special Instructions</h4>
+        <textarea
+          class="popup-instructions-input"
+          placeholder="Add a note"
+          rows="3"
+          maxlength="200"
+          [(ngModel)]="popupSpecialInstructions"></textarea>
+        <p class="popup-instructions-hint">You may be charged for extras.</p>
+      </div>
+
+      <!-- Quantity & Add to Cart -->
+      <div class="popup-footer" *ngIf="!isItemOutOfStock(popup.item, popup.itemIndex, popup.category)">
+        <div class="popup-qty-row">
+          <button class="popup-qty-btn" (click)="popupQty > 1 ? popupQty = popupQty - 1 : null">−</button>
+          <span class="popup-qty-val">{{ popupQty }}</span>
+          <button class="popup-qty-btn" (click)="popupQty = popupQty + 1">+</button>
+        </div>
+        <button class="popup-add-btn" (click)="addPopupToCart()">
+          Add {{ popupQty }} to Cart &nbsp;·&nbsp; {{ (popup.item.basePrice * popupQty) | currency:'USD':'symbol':'1.2-2' }}
+        </button>
+      </div>
+
+      <div class="popup-footer" *ngIf="isItemOutOfStock(popup.item, popup.itemIndex, popup.category)">
+        <button class="popup-add-btn popup-add-btn-oos" disabled>Currently Unavailable</button>
+      </div>
+    </div>
+
+  </div>
 </div>

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
-import { User } from "../app.component";
-import { HttpClient } from "@angular/common/http";
-import { CartService } from "../cart.service";
+import { Router } from '@angular/router';
+import { User } from '../app.component';
+import { HttpClient } from '@angular/common/http';
+import { CartService } from '../cart.service';
+import { ToastService } from '../toast/toast.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -12,71 +13,39 @@ import { environment } from '../../environments/environment';
 })
 export class ContactUsComponent implements OnInit {
 
-  modelUser: User = {
-    username:'',
-    password:'',
-    email:'',
-    phone:0,
-    firstname:'',
-    lastname:'',
-    address:'',
-    merchant:null
-  };
+  modelUser: User = { username:'', password:'', email:'', phone:0, firstname:'', lastname:'', address:'', merchant:null };
+  modelMessage: contact = { name: '', email: '', message: '' };
+  gif = false;
 
-  modelMessage:contact={
-    name:'',
-    email:'',
-    message:''
-  };
-
-
-  constructor(private http: HttpClient, private router: Router, private cartService: CartService) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cartService: CartService,
+    private toast: ToastService
+  ) {}
 
   ngOnInit() {
-    if(sessionStorage.getItem('userData')==null)
-      this.router.navigate(["login"]);
-
-    let userData = JSON.parse(sessionStorage.getItem('userData'));
-    console.log(userData);
-    Object.assign(this.modelUser,userData);
+    if (sessionStorage.getItem('userData') == null) { this.router.navigate(['login']); return; }
+    Object.assign(this.modelUser, JSON.parse(sessionStorage.getItem('userData')));
   }
 
-  gif:boolean=false;
   sendFeedback() {
-    this.gif=true;
-    this.modelMessage.name=this.modelUser.firstname+this.modelUser.lastname;
-    this.modelMessage.email=this.modelUser.email;
-
-    let url = `${environment.apiUrl}/contact`;
-    this.http.post <contact>(url,this.modelMessage).subscribe(
+    this.gif = true;
+    this.modelMessage.name  = this.modelUser.firstname + ' ' + this.modelUser.lastname;
+    this.modelMessage.email = this.modelUser.email;
+    this.http.post<contact>(`${environment.apiUrl}/contact`, this.modelMessage).subscribe(
       res => {
-        ContactUsComponent.changeLoading();
-        if(res)
-          alert("Message Sent Successfully");
-          this.gif=!res;
+        this.gif = !res;
+        if (res) { this.toast.success('Message sent successfully!'); }
       },
-      err=>{
-        alert("An error has occurred while sending the message");
-        this.gif=false;
+      () => {
+        this.gif = false;
+        this.toast.error('An error occurred while sending the message.');
       }
-    )
+    );
   }
 
-  static changeLoading():void{
-    setTimeout(()=>{
-    },4000);
-  }
-
-  clearLocal() {
-    this.cartService.clearCart();
-    sessionStorage.clear();
-  }
+  clearLocal() { this.cartService.clearCart(); sessionStorage.clear(); }
 }
 
-
-
-export interface contact {
-  message:string;
-  name:string;
-  email:string;
-}
+export interface contact { message: string; name: string; email: string; }

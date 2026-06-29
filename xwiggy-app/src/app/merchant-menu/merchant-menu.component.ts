@@ -4,7 +4,8 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { MenuServiceService } from "../menu-service.service";
 import { DomSanitizer } from '@angular/platform-browser';
-import { CartService } from "../cart.service";
+import { CartService } from '../cart.service';
+import { ToastService } from '../toast/toast.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -25,7 +26,7 @@ export class MerchantMenuComponent implements OnInit {
   values: Quantity[] = [];
 
   constructor(private http: HttpClient, private router: Router, private menuService: MenuServiceService,
-              public _DomSanitizationService: DomSanitizer, private cartService: CartService) { }
+              public _DomSanitizationService: DomSanitizer, private cartService: CartService, private toast: ToastService) {}
 
   ngOnInit() {
     if (sessionStorage.getItem("userData") == null) {
@@ -59,7 +60,7 @@ export class MerchantMenuComponent implements OnInit {
         this.ngOnInit();
       },
       err=>{
-        alert("Error adding items to cart");
+        this.toast.error('Error adding items to cart.');
       }
     )
 

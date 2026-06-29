@@ -1,84 +1,344 @@
-<div class="profile-page">
-  <div class="profile-card">
+<div class="account-page">
 
-    <div class="profile-header">
-      <h2 class="profile-greeting">Welcome, {{modelUser.firstname}}</h2>
-      <span class="account-badge">User Account</span>
-    </div>
-
-    <div class="profile-divider"></div>
-
-    <!-- Status messages -->
-    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-    <div *ngIf="errorMessage"   class="alert alert-error">{{ errorMessage }}</div>
-
-    <!-- ── VIEW MODE ── -->
-    <div *ngIf="!isEditing" class="profile-fields">
-      <div class="profile-row">
-        <span class="field-label"><i class="fa fa-user"></i> First Name</span>
-        <span class="field-value">{{modelUser.firstname}}</span>
-      </div>
-      <div class="profile-row">
-        <span class="field-label"><i class="fa fa-user-circle"></i> Last Name</span>
-        <span class="field-value">{{modelUser.lastname}}</span>
-      </div>
-      <div class="profile-row">
-        <span class="field-label"><i class="fa fa-mobile"></i> Mobile Number</span>
-        <span class="field-value">{{modelUser.phone}}</span>
-      </div>
-      <div class="profile-row">
-        <span class="field-label"><i class="fa fa-envelope"></i> E-Mail ID</span>
-        <span class="field-value">{{modelUser.email}}</span>
-      </div>
-      <div class="profile-row">
-        <span class="field-label"><i class="fa fa-map-marker"></i> Address</span>
-        <span class="field-value">{{modelUser.address}}</span>
-      </div>
-
-      <div class="profile-actions">
-        <button class="btn-edit" (click)="startEdit()">
-          <i class="fa fa-pencil"></i> Edit Profile
-        </button>
+  <!-- ── Left sidebar navigation ── -->
+  <aside class="account-sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">{{ modelUser.firstname?.charAt(0)?.toUpperCase() }}</div>
+      <div class="sidebar-user-info">
+        <span class="sidebar-name">{{ modelUser.firstname }} {{ modelUser.lastname }}</span>
+        <span class="sidebar-username">@{{ modelUser.username }}</span>
       </div>
     </div>
 
-    <!-- ── EDIT MODE ── -->
-    <div *ngIf="isEditing" class="profile-fields">
-      <div class="edit-row">
-        <label class="edit-label"><i class="fa fa-user"></i> First Name</label>
-        <input class="edit-input" type="text" [(ngModel)]="editUser.firstname"
-               placeholder="First name" maxlength="45" />
-      </div>
-      <div class="edit-row">
-        <label class="edit-label"><i class="fa fa-user-circle"></i> Last Name</label>
-        <input class="edit-input" type="text" [(ngModel)]="editUser.lastname"
-               placeholder="Last name" maxlength="45" />
-      </div>
-      <div class="edit-row">
-        <label class="edit-label"><i class="fa fa-mobile"></i> Mobile Number</label>
-        <input class="edit-input" type="tel" [(ngModel)]="editUser.phone"
-               placeholder="Mobile number" maxlength="15" />
-      </div>
-      <div class="edit-row">
-        <label class="edit-label"><i class="fa fa-envelope"></i> E-Mail ID</label>
-        <input class="edit-input" type="email" [(ngModel)]="editUser.email"
-               placeholder="Email address" maxlength="45" />
-      </div>
-      <div class="edit-row">
-        <label class="edit-label"><i class="fa fa-map-marker"></i> Address</label>
-        <input class="edit-input" type="text" [(ngModel)]="editUser.address"
-               placeholder="Address" maxlength="45" />
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">ACCOUNT</div>
+      <button class="nav-item" [class.active]="activeSection === 'profile'" (click)="setSection('profile')">
+        <i class="fa fa-user"></i>
+        <span>Profile</span>
+      </button>
+      <button class="nav-item" [class.active]="activeSection === 'cards'" (click)="setSection('cards')">
+        <i class="fa fa-credit-card"></i>
+        <span>Payment Methods</span>
+      </button>
+      <button class="nav-item" [class.active]="activeSection === 'security'" (click)="setSection('security')">
+        <i class="fa fa-lock"></i>
+        <span>Security</span>
+      </button>
+
+      <div class="nav-section-label" style="margin-top:16px">PREFERENCES</div>
+      <button class="nav-item" [class.active]="activeSection === 'subscription'" (click)="setSection('subscription')">
+        <i class="fa fa-star"></i>
+        <span>Subscription</span>
+      </button>
+      <button class="nav-item" [class.active]="activeSection === 'notifications'" (click)="setSection('notifications')">
+        <i class="fa fa-bell"></i>
+        <span>Notifications</span>
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ── Main content ── -->
+  <main class="account-main">
+
+    <!-- ══ PROFILE SECTION ══ -->
+    <section *ngIf="activeSection === 'profile'" class="account-section">
+      <div class="section-header">
+        <h2 class="section-title">Profile Information</h2>
+        <p class="section-subtitle">Manage your personal details</p>
       </div>
 
-      <div class="profile-actions edit-actions">
-        <button class="btn-save" (click)="saveEdit()" [disabled]="saving">
-          <i class="fa fa-check"></i> {{ saving ? 'Saving...' : 'Save Changes' }}
-        </button>
-        <button class="btn-cancel" (click)="cancelEdit()" [disabled]="saving">
-          <i class="fa fa-times"></i> Cancel
+      <div *ngIf="successMessage" class="alert alert-success"><i class="fa fa-check-circle"></i> {{ successMessage }}</div>
+      <div *ngIf="errorMessage"   class="alert alert-error"><i class="fa fa-exclamation-circle"></i> {{ errorMessage }}</div>
+
+      <!-- View mode -->
+      <div *ngIf="!isEditing" class="info-card">
+        <div class="info-row">
+          <div class="info-cell">
+            <label class="info-label"><i class="fa fa-user"></i> First Name</label>
+            <span class="info-value">{{ modelUser.firstname }}</span>
+          </div>
+          <div class="info-cell">
+            <label class="info-label"><i class="fa fa-user-circle"></i> Last Name</label>
+            <span class="info-value">{{ modelUser.lastname }}</span>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-cell">
+            <label class="info-label"><i class="fa fa-mobile"></i> Mobile Number</label>
+            <span class="info-value">{{ modelUser.phone }}</span>
+          </div>
+          <div class="info-cell">
+            <label class="info-label"><i class="fa fa-envelope"></i> Email Address</label>
+            <span class="info-value">{{ modelUser.email }}</span>
+          </div>
+        </div>
+        <div class="info-row single">
+          <div class="info-cell">
+            <label class="info-label"><i class="fa fa-map-marker"></i> Delivery Address</label>
+            <span class="info-value">{{ modelUser.address }}</span>
+          </div>
+        </div>
+        <div class="section-actions">
+          <button class="btn-primary" (click)="startEdit()"><i class="fa fa-pencil"></i> Edit Profile</button>
+        </div>
+      </div>
+
+      <!-- Edit mode -->
+      <div *ngIf="isEditing" class="info-card">
+        <div class="info-row">
+          <div class="info-cell">
+            <label class="info-label">First Name</label>
+            <input class="form-input" type="text" [(ngModel)]="editUser.firstname" placeholder="First name" maxlength="45" />
+          </div>
+          <div class="info-cell">
+            <label class="info-label">Last Name</label>
+            <input class="form-input" type="text" [(ngModel)]="editUser.lastname" placeholder="Last name" maxlength="45" />
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-cell">
+            <label class="info-label">Mobile Number</label>
+            <input class="form-input" type="tel" [(ngModel)]="editUser.phone" placeholder="Mobile number" maxlength="15" />
+          </div>
+          <div class="info-cell">
+            <label class="info-label">Email Address</label>
+            <input class="form-input" type="email" [(ngModel)]="editUser.email" placeholder="Email" maxlength="45" />
+          </div>
+        </div>
+        <div class="info-row single">
+          <div class="info-cell">
+            <label class="info-label">Delivery Address</label>
+            <input class="form-input" type="text" [(ngModel)]="editUser.address" placeholder="Address" maxlength="45" />
+          </div>
+        </div>
+        <div class="section-actions">
+          <button class="btn-primary" (click)="saveEdit()" [disabled]="saving">
+            <i class="fa fa-check"></i> {{ saving ? 'Saving…' : 'Save Changes' }}
+          </button>
+          <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving">
+            <i class="fa fa-times"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ PAYMENT METHODS SECTION ══ -->
+    <section *ngIf="activeSection === 'cards'" class="account-section">
+      <div class="section-header">
+        <h2 class="section-title">Payment Methods</h2>
+        <p class="section-subtitle">Manage your saved credit and debit cards</p>
+      </div>
+
+      <div *ngIf="cardSuccess" class="alert alert-success"><i class="fa fa-check-circle"></i> {{ cardSuccess }}</div>
+      <div *ngIf="cardError"   class="alert alert-error"><i class="fa fa-exclamation-circle"></i> {{ cardError }}</div>
+
+      <!-- Saved cards list -->
+      <div class="cards-list" *ngIf="savedCards.length > 0">
+        <div class="card-tile" *ngFor="let card of savedCards; let i = index" [class.card-default]="card.isDefault">
+          <div class="card-chip">
+            <i class="fa fa-credit-card"></i>
+          </div>
+          <div class="card-info">
+            <span class="card-brand">{{ card.cardType }}</span>
+            <span class="card-number-masked">•••• •••• •••• {{ card.lastFour }}</span>
+            <span class="card-holder">{{ card.holderName }}</span>
+            <span class="card-expiry">Expires {{ card.expiry }}</span>
+          </div>
+          <div class="card-actions">
+            <span class="default-badge" *ngIf="card.isDefault">Default</span>
+            <button class="btn-icon" title="Set as default" (click)="setDefaultCard(i)" *ngIf="!card.isDefault">
+              <i class="fa fa-star-o"></i>
+            </button>
+            <button class="btn-icon" title="Edit" (click)="editCard(i)">
+              <i class="fa fa-pencil"></i>
+            </button>
+            <button class="btn-icon danger" title="Remove" (click)="removeCard(i)">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="savedCards.length === 0 && !showCardForm">
+        <i class="fa fa-credit-card fa-2x"></i>
+        <p>No payment methods saved yet</p>
+      </div>
+
+      <!-- Add / Edit card form -->
+      <div class="info-card card-form-card" *ngIf="showCardForm">
+        <h3 class="form-subtitle">{{ editingCardIndex >= 0 ? 'Edit Card' : 'Add New Card' }}</h3>
+        <div class="card-preview-strip" [class]="'brand-' + detectCardType(cardForm.number).toLowerCase()">
+          <span class="preview-brand">{{ detectCardType(cardForm.number) }}</span>
+          <span class="preview-num">{{ formatCardPreview(cardForm.number) }}</span>
+          <div class="preview-bottom">
+            <span>{{ cardForm.holderName || 'CARD HOLDER' }}</span>
+            <span>{{ cardForm.expiry || 'MM/YY' }}</span>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-cell">
+            <label class="info-label">Card Number</label>
+            <input class="form-input" type="text" [(ngModel)]="cardForm.number"
+                   placeholder="1234 5678 9012 3456" maxlength="19"
+                   (input)="formatCardNumber($event)" />
+          </div>
+          <div class="info-cell">
+            <label class="info-label">Card Holder Name</label>
+            <input class="form-input" type="text" [(ngModel)]="cardForm.holderName"
+                   placeholder="Name on card" maxlength="45" style="text-transform:uppercase" />
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-cell">
+            <label class="info-label">Expiry Date</label>
+            <input class="form-input" type="text" [(ngModel)]="cardForm.expiry"
+                   placeholder="MM/YY" maxlength="5"
+                   (input)="formatExpiry($event)" />
+          </div>
+          <div class="info-cell">
+            <label class="info-label">CVV</label>
+            <input class="form-input" type="password" [(ngModel)]="cardForm.cvv"
+                   placeholder="•••" maxlength="4" />
+          </div>
+        </div>
+        <div class="info-row single">
+          <div class="info-cell">
+            <label class="info-label">Billing Address (optional)</label>
+            <input class="form-input" type="text" [(ngModel)]="cardForm.billingAddress"
+                   placeholder="Same as delivery address" maxlength="100" />
+          </div>
+        </div>
+        <div class="section-actions">
+          <button class="btn-primary" (click)="saveCard()">
+            <i class="fa fa-check"></i> {{ editingCardIndex >= 0 ? 'Update Card' : 'Save Card' }}
+          </button>
+          <button class="btn-secondary" (click)="cancelCardForm()">
+            <i class="fa fa-times"></i> Cancel
+          </button>
+        </div>
+      </div>
+
+      <div class="section-actions" *ngIf="!showCardForm">
+        <button class="btn-primary" (click)="openAddCard()">
+          <i class="fa fa-plus"></i> Add New Card
         </button>
       </div>
-    </div>
+    </section>
 
-  </div>
+    <!-- ══ SECURITY SECTION ══ -->
+    <section *ngIf="activeSection === 'security'" class="account-section">
+      <div class="section-header">
+        <h2 class="section-title">Security</h2>
+        <p class="section-subtitle">Manage your password and account security</p>
+      </div>
+      <div class="info-card">
+        <div class="security-item">
+          <div class="security-item-info">
+            <i class="fa fa-key security-icon"></i>
+            <div>
+              <strong>Password</strong>
+              <p>Last changed: Unknown · ••••••••</p>
+            </div>
+          </div>
+          <a routerLink="/resetPassword" class="btn-outline">Change Password</a>
+        </div>
+        <div class="security-item">
+          <div class="security-item-info">
+            <i class="fa fa-envelope security-icon"></i>
+            <div>
+              <strong>Verified Email</strong>
+              <p>{{ modelUser.email }}</p>
+            </div>
+          </div>
+          <span class="verified-badge"><i class="fa fa-check"></i> Verified</span>
+        </div>
+        <div class="security-item">
+          <div class="security-item-info">
+            <i class="fa fa-mobile security-icon"></i>
+            <div>
+              <strong>Mobile Number</strong>
+              <p>{{ modelUser.phone }}</p>
+            </div>
+          </div>
+          <span class="verified-badge"><i class="fa fa-check"></i> Linked</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SUBSCRIPTION SECTION ══ -->
+    <section *ngIf="activeSection === 'subscription'" class="account-section">
+      <div class="section-header">
+        <h2 class="section-title">Subscription</h2>
+        <p class="section-subtitle">Your current plan and benefits</p>
+      </div>
+      <div class="info-card subscription-card">
+        <div class="plan-badge free">FREE PLAN</div>
+        <h3 class="plan-name">Xwiggy Basic</h3>
+        <p class="plan-desc">You're on the free plan. Upgrade to unlock exclusive discounts, priority delivery, and more.</p>
+        <ul class="plan-features">
+          <li><i class="fa fa-check"></i> Access to full menu</li>
+          <li><i class="fa fa-check"></i> Order history</li>
+          <li><i class="fa fa-check"></i> Basic promo codes</li>
+          <li class="locked"><i class="fa fa-lock"></i> Free delivery <span class="pro-tag">PRO</span></li>
+          <li class="locked"><i class="fa fa-lock"></i> Priority order processing <span class="pro-tag">PRO</span></li>
+          <li class="locked"><i class="fa fa-lock"></i> 10% cashback on every order <span class="pro-tag">PRO</span></li>
+        </ul>
+        <button class="btn-upgrade"><i class="fa fa-star"></i> Upgrade to Xwiggy Pro</button>
+      </div>
+    </section>
+
+    <!-- ══ NOTIFICATIONS SECTION ══ -->
+    <section *ngIf="activeSection === 'notifications'" class="account-section">
+      <div class="section-header">
+        <h2 class="section-title">Notification Preferences</h2>
+        <p class="section-subtitle">Choose what updates you'd like to receive</p>
+      </div>
+      <div class="info-card">
+        <div class="notif-row">
+          <div class="notif-info">
+            <strong>Order Confirmations</strong>
+            <p>Get notified when your order is placed</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="notifPrefs.orderConfirm" (change)="notifPrefs.orderConfirm = !notifPrefs.orderConfirm">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="notif-row">
+          <div class="notif-info">
+            <strong>Order Status Updates</strong>
+            <p>Updates when your order is being prepared and out for delivery</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="notifPrefs.statusUpdates" (change)="notifPrefs.statusUpdates = !notifPrefs.statusUpdates">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="notif-row">
+          <div class="notif-info">
+            <strong>Promotions & Offers</strong>
+            <p>Special discounts and new menu items</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="notifPrefs.promos" (change)="notifPrefs.promos = !notifPrefs.promos">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="notif-row">
+          <div class="notif-info">
+            <strong>Newsletter</strong>
+            <p>Weekly updates and food stories</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [checked]="notifPrefs.newsletter" (change)="notifPrefs.newsletter = !notifPrefs.newsletter">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="section-actions">
+          <button class="btn-primary" (click)="saveNotifPrefs()"><i class="fa fa-check"></i> Save Preferences</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
 </div>

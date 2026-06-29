@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
-import { Router } from "@angular/router";
-import { CartService } from "../cart.service";
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { CartService } from '../cart.service';
+import { ToastService } from '../toast/toast.service';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -11,78 +12,48 @@ import { environment } from '../../environments/environment';
 })
 export class AddItemComponent implements OnInit {
 
-  newFoodItems: foodItems = {
-    id: '',
-    name: '',
-    price: null,
-    quantityAvailable: null,
-    fileDataF: null
-  };
+  newFoodItems: foodItems = { id: '', name: '', price: null, quantityAvailable: null, fileDataF: null };
+  selectedFile: any = null;
+  url: string = null;
+  present: boolean = null;
 
-  constructor(private http: HttpClient, private router: Router, private cartService: CartService) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private cartService: CartService,
+    private toast: ToastService
+  ) {}
 
   ngOnInit() {
-    if(sessionStorage.length==0)
-      this.router.navigate(['welcome']);
+    if (sessionStorage.length === 0) { this.router.navigate(['welcome']); }
   }
 
-  url:string=null;
-  onSubmit():void{
+  onSubmit(): void {
     const formData = new FormData();
     formData.append('file', this.selectedFile);
-    formData.append('newFoodItem',JSON.stringify(this.newFoodItems));
-    console.log(formData.get('file'));
-    console.log(formData.get('newFoodItem'));
+    formData.append('newFoodItem', JSON.stringify(this.newFoodItems));
+    this.url = (formData.get('file') == null)
+      ? `${environment.apiUrl}/addNewItem`
+      : `${environment.apiUrl}/addNewItemUrl`;
 
-    if(formData.get('file')==null || formData.get('file')==undefined)
-    {
-      console.log(formData.get('file'));
-      this.url=`${environment.apiUrl}/addNewItem`;
-    }
-    else
-    {
-      this.url=`${environment.apiUrl}/addNewItemUrl`;
-    }
-    this.http.post(this.url, formData)
-      .subscribe(
-        res=>
-        {
-          console.log(this.newFoodItems);
-          alert("Item Added Successfully!");
-        },err=>{
-          alert("Failed to add item. Please Try after sometime!");
-        }
-      )
+    this.http.post(this.url, formData).subscribe(
+      () => this.toast.success('Item added successfully!'),
+      () => this.toast.error('Failed to add item. Please try again.')
+    );
   }
 
-  selectedFile:any=null;
-
-  onFileSelected(event) {
-    this.selectedFile = event.target.files[0];
-  }
-
-  present:boolean=null;
+  onFileSelected(event: any) { this.selectedFile = event.target.files[0]; }
 
   checkAvailability() {
     this.http.post<boolean>(`${environment.apiUrl}/checkItemId`, this.newFoodItems.id).subscribe(
-      res=>{
-        this.present=res;
-      },err=>{
-        alert("Error. Try After Sometime");
-      }
-    )
+      res => { this.present = res; },
+      () => this.toast.error('Error checking availability. Try again later.')
+    );
   }
 
-  clearLocal() {
-    this.cartService.clearCart();
-    sessionStorage.clear();
-  }
+  clearLocal() { this.cartService.clearCart(); sessionStorage.clear(); }
 }
 
 export interface foodItems {
-  id: string;
-  name:string;
-  price:number;
-  quantityAvailable:number;
-  fileDataF:string;
+  id: string; name: string; price: number; quantityAvailable: number; fileDataF: string;
 }
