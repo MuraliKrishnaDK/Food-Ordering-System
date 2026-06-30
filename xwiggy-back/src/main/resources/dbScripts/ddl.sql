@@ -70,12 +70,14 @@ CREATE TABLE IF NOT EXISTS orders (
     total      NUMERIC(10,2) NOT NULL,
     status     VARCHAR(20)  NOT NULL DEFAULT 'PLACED',
     delivery_code VARCHAR(4),
-    created_at TIMESTAMP    NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP    NOT NULL DEFAULT NOW()
+    ordered_at TIMESTAMP    NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP    DEFAULT NOW(),
+    updated_at TIMESTAMP    DEFAULT NOW()
 );
 
 -- Run on existing databases if column is missing:
 -- ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_code VARCHAR(4);
+-- ALTER TABLE orders ADD COLUMN IF NOT EXISTS ordered_at TIMESTAMP NOT NULL DEFAULT NOW();
 -- ALTER TABLE app_user ADD COLUMN IF NOT EXISTS notif_order_confirm BOOLEAN NOT NULL DEFAULT TRUE;
 -- ALTER TABLE app_user ADD COLUMN IF NOT EXISTS notif_status_updates BOOLEAN NOT NULL DEFAULT TRUE;
 -- ALTER TABLE app_user ADD COLUMN IF NOT EXISTS notif_promos BOOLEAN NOT NULL DEFAULT FALSE;

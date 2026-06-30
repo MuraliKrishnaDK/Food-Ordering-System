@@ -52,8 +52,10 @@ public class OrderController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            System.err.println("[FoodDoor] placeOrder failed: " + e.getMessage());
+            e.printStackTrace();
             response.put("status", false);
-            response.put("msg", e.getMessage());
+            response.put("msg", "Could not place order. Please try again.");
             return ResponseEntity.ok(response);
         }
     }
