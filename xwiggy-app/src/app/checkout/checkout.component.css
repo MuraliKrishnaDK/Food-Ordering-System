@@ -391,6 +391,11 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
+  animation: overlayIn 0.25s ease;
+}
+
+.order-placed-overlay.overlay-exiting {
+  animation: overlayOut 0.3s ease forwards;
 }
 
 .order-placed-modal {
@@ -401,6 +406,31 @@
   max-width: 360px;
   width: 100%;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: modalIn 0.25s ease;
+}
+
+.order-placed-modal.modal-exiting {
+  animation: modalOut 0.3s ease forwards;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes overlayOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes modalOut {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.92); opacity: 0; }
 }
 
 .order-placed-icon {
@@ -486,6 +516,21 @@
   font-size: 0.82rem;
   margin-top: 4px;
   font-weight: 600;
+  animation: promoIn 0.25s ease;
+}
+
+.promo-msg.promo-fading {
+  animation: promoOut 0.3s ease forwards;
+}
+
+@keyframes promoIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes promoOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-6px); }
 }
 
 .promo-msg.success {

@@ -55,7 +55,10 @@ export class CheckoutComponent implements OnInit {
   finalTotal = 0;
   processingPayment = false;
   showOrderPlacedPopup = false;
+  orderPlacedExiting = false;
   placedOrderId: number = null;
+  promoFading = false;
+  private promoNoticeTimer: number = null;
 
 
   ngOnInit() {
@@ -160,31 +163,61 @@ export class CheckoutComponent implements OnInit {
           this.promoApplied = true;
           this.promoDiscount = res.discount;
           this.finalTotal = res.newTotal;
-          this.promoMessage = res.message;
-          this.promoError = null;
+          this.showPromoNotice(res.message, true);
           this.toast.success(`Promo applied: ${res.label}`);
         } else {
           this.promoApplied = false;
           this.promoDiscount = 0;
           this.finalTotal = this.grandTotal;
-          this.promoError = res.message;
-          this.promoMessage = null;
+          this.showPromoNotice(res.message, false);
+          this.toast.error(res.message);
         }
       },
       () => {
-        this.promoError = 'Could not validate promo code. Try again.';
-        this.promoMessage = null;
+        this.showPromoNotice('Could not validate promo code. Try again.', false);
+        this.toast.error('Could not validate promo code. Try again.');
       }
     );
   }
 
+  private showPromoNotice(message: string, success: boolean): void {
+    if (this.promoNoticeTimer) {
+      clearTimeout(this.promoNoticeTimer);
+      this.promoNoticeTimer = null;
+    }
+    this.promoFading = false;
+    if (success) {
+      this.promoMessage = message;
+      this.promoError = null;
+    } else {
+      this.promoError = message;
+      this.promoMessage = null;
+    }
+    this.promoNoticeTimer = window.setTimeout(() => this.fadeOutPromoNotice(), 3000);
+  }
+
+  private fadeOutPromoNotice(): void {
+    this.promoFading = true;
+    window.setTimeout(() => {
+      this.promoMessage = null;
+      this.promoError = null;
+      this.promoFading = false;
+      this.promoNoticeTimer = null;
+    }, 300);
+  }
+
   removePromo(): void {
+    if (this.promoNoticeTimer) {
+      clearTimeout(this.promoNoticeTimer);
+      this.promoNoticeTimer = null;
+    }
     this.promoCode = '';
     this.promoApplied = false;
     this.promoDiscount = 0;
     this.finalTotal = this.grandTotal;
     this.promoMessage = null;
     this.promoError = null;
+    this.promoFading = false;
   }
 
   removeItem(item: CheckoutLineItem): void {
@@ -399,9 +432,15 @@ export class CheckoutComponent implements OnInit {
           sessionStorage.setItem('highlightOrderId', String(res.orderId));
           this.clearCartAfterOrder();
           this.showOrderPlacedPopup = true;
-          setTimeout(() => {
-            this.router.navigate(['/orderHistory']);
-          }, 2200);
+          this.orderPlacedExiting = false;
+          window.setTimeout(() => {
+            this.orderPlacedExiting = true;
+            window.setTimeout(() => {
+              this.showOrderPlacedPopup = false;
+              this.orderPlacedExiting = false;
+              this.router.navigate(['/orderHistory']);
+            }, 300);
+          }, 3000);
         } else {
           this.toast.error((res && res.msg) ? res.msg : 'Order could not be placed. Please try again.');
         }

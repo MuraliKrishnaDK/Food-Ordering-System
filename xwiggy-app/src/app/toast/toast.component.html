@@ -1,7 +1,8 @@
 <div class="toast-container">
   <div class="toast"
        *ngFor="let t of toasts"
-       [class]="'toast toast-' + t.type">
+       [class]="'toast toast-' + t.type"
+       [class.toast-exiting]="t.exiting">
     <span class="toast-icon">
       <ng-container [ngSwitch]="t.type">
         <span *ngSwitchCase="'success'">✓</span>

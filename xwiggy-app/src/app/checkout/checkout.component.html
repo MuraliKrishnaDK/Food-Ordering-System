@@ -59,8 +59,8 @@
                 Apply
               </button>
             </div>
-            <div class="promo-msg success" *ngIf="promoMessage">✓ {{ promoMessage }}</div>
-            <div class="promo-msg error"   *ngIf="promoError">{{ promoError }}</div>
+            <div class="promo-msg success" *ngIf="promoMessage" [class.promo-fading]="promoFading">✓ {{ promoMessage }}</div>
+            <div class="promo-msg error"   *ngIf="promoError" [class.promo-fading]="promoFading">{{ promoError }}</div>
           </div>
         </section>
 
@@ -166,8 +166,8 @@
 </div>
 
 <!-- Order Placed popup -->
-<div class="order-placed-overlay" *ngIf="showOrderPlacedPopup">
-  <div class="order-placed-modal">
+<div class="order-placed-overlay" *ngIf="showOrderPlacedPopup" [class.overlay-exiting]="orderPlacedExiting">
+  <div class="order-placed-modal" [class.modal-exiting]="orderPlacedExiting">
     <div class="order-placed-icon">✓</div>
     <h2>Order Placed</h2>
     <p *ngIf="placedOrderId">Your order #{{ placedOrderId }} has been placed successfully.</p>

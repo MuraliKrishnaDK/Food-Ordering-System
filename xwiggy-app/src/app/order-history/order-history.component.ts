@@ -127,9 +127,17 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
       const nextStatus = this.statusSteps[idx + 1];
       this.displayStatuses[order.id] = nextStatus;
       order.status = nextStatus;
+      const master = this.orders.find(o => o.id === order.id);
+      if (master) {
+        master.status = nextStatus;
+      }
       this.updateOrderStatusOnServer(order.id, nextStatus);
 
       if (nextStatus === 'DELIVERED') {
+        order.expanded = false;
+        if (master) {
+          master.expanded = false;
+        }
         this.splitOrdersByTimeline();
       } else {
         this.scheduleNextTransition(order);
@@ -154,7 +162,7 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
       case 'PLACED':           return this.randomDelayMinutes(1, 3);
       case 'CONFIRMED':        return this.randomDelayMinutes(10, 15);
       case 'PREPARING':        return this.randomDelayMinutes(15, 20);
-      case 'OUT_FOR_DELIVERY': return this.randomDelayMinutes(10, 15);
+      case 'OUT_FOR_DELIVERY': return this.randomDelayMinutes(5, 10);
       default:                 return 60000;
     }
   }
