@@ -391,32 +391,24 @@ export class CheckoutComponent implements OnInit {
       total: this.finalTotal
     };
 
-    this.http.get(`${environment.apiUrl}/changeDB`).subscribe(
-      () => {
-        this.http.post<any>(`${environment.apiUrl}/orders`, orderPayload).subscribe(
-          (res) => {
-            this.processingPayment = false;
-            if (res && res.status) {
-              this.placedOrderId = res.orderId;
-              sessionStorage.setItem('highlightOrderId', String(res.orderId));
-              this.clearCartAfterOrder();
-              this.showOrderPlacedPopup = true;
-              setTimeout(() => {
-                this.router.navigate(['/orderHistory']);
-              }, 2200);
-            } else {
-              this.toast.error('Order could not be placed. Please try again.');
-            }
-          },
-          () => {
-            this.processingPayment = false;
-            this.toast.error('Order could not be placed. Please try again.');
-          }
-        );
+    this.http.post<any>(`${environment.apiUrl}/orders`, orderPayload).subscribe(
+      (res) => {
+        this.processingPayment = false;
+        if (res && res.status) {
+          this.placedOrderId = res.orderId;
+          sessionStorage.setItem('highlightOrderId', String(res.orderId));
+          this.clearCartAfterOrder();
+          this.showOrderPlacedPopup = true;
+          setTimeout(() => {
+            this.router.navigate(['/orderHistory']);
+          }, 2200);
+        } else {
+          this.toast.error((res && res.msg) ? res.msg : 'Order could not be placed. Please try again.');
+        }
       },
       () => {
         this.processingPayment = false;
-        this.toast.error('Payment processing failed. Please try again.');
+        this.toast.error('Order could not be placed. Please try again.');
       }
     );
   }
