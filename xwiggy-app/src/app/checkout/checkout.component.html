@@ -119,12 +119,12 @@
               </div>
               <div class="expiry-item">
                 <label>Year (YY)</label>
-                <input type="number" placeholder="YY" min="0" max="99"
+                <input type="number" placeholder="YY or YYYY"
                        [(ngModel)]="year"
                        (input)="validYear()"
                        [class.input-valid]="yearVal === true"
                        [class.input-invalid]="yearVal === false">
-                <span class="field-hint" *ngIf="yearVal === false">Invalid or past year.</span>
+                <span class="field-hint" *ngIf="yearVal === false">Invalid or past year. Use 30 or 2030.</span>
               </div>
             </div>
 

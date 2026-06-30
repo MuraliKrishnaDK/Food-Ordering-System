@@ -262,7 +262,7 @@ export class CheckoutComponent implements OnInit {
     const now = new Date();
     const currentYear = now.getFullYear() % 100;
     const currentMonth = now.getMonth() + 1;
-    const enteredYear = this.year || 0;
+    const enteredYear = this.normalizeExpiryYear() || 0;
 
     this.monthVal = this.month >= 1 && this.month <= 12;
 
@@ -272,19 +272,46 @@ export class CheckoutComponent implements OnInit {
     this.validYear();
   }
 
+  /** Accepts YY (30) or YYYY (2030); stores normalized 2-digit year on the model. */
+  private normalizeExpiryYear(): number | null {
+    if (this.year === null || this.year === undefined) {
+      return null;
+    }
+    const raw = Number(this.year);
+    if (isNaN(raw)) {
+      return null;
+    }
+    if (raw >= 2000 && raw <= 2099) {
+      const normalized = raw % 100;
+      this.year = normalized;
+      return normalized;
+    }
+    if (raw >= 0 && raw <= 99) {
+      return raw;
+    }
+    // e.g. 203 while user is still typing 2030
+    return null;
+  }
+
   validYear() {
-    if (!this.year) { this.yearVal = null; return; }
+    const normalized = this.normalizeExpiryYear();
+    if (normalized === null) {
+      this.yearVal = this.year !== null && this.year !== undefined && Number(this.year) >= 100
+        ? null
+        : (this.year ? false : null);
+      return;
+    }
     const now = new Date();
     const currentYear = now.getFullYear() % 100;
     const currentMonth = now.getMonth() + 1;
 
-    if (this.year < currentYear || this.year > 99) {
+    if (normalized < currentYear || normalized > 99) {
       this.yearVal = false;
       return;
     }
     this.yearVal = true;
 
-    if (this.month && this.year === currentYear) {
+    if (this.month && normalized === currentYear) {
       this.monthVal = this.month >= currentMonth;
     }
   }
@@ -325,7 +352,8 @@ export class CheckoutComponent implements OnInit {
       const now = new Date();
       const cy = now.getFullYear() % 100;
       const cm = now.getMonth() + 1;
-      if (this.year < cy || (this.year === cy && this.month < cm)) {
+      const expiryYear = this.normalizeExpiryYear() || 0;
+      if (expiryYear < cy || (expiryYear === cy && this.month < cm)) {
         this.validationErrors.push('Card has expired.');
         this.monthVal = false;
         this.yearVal = false;
