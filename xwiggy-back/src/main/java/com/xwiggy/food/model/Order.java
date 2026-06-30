@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "orders")
 public class Order {
+
+  private static final ZoneId ORDER_TIME_ZONE = ZoneId.of("America/New_York");
 
     public enum Status {
         PLACED, CONFIRMED, PREPARING, OUT_FOR_DELIVERY, DELIVERED
@@ -45,24 +48,24 @@ public class Order {
 
     public Order() {}
 
-    @PrePersist
-    void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        if (orderedAt == null) {
-            orderedAt = now;
-        }
-        if (createdAt == null) {
-            createdAt = orderedAt;
-        }
-        if (updatedAt == null) {
-            updatedAt = now;
-        }
+  @PrePersist
+  void onCreate() {
+    LocalDateTime now = LocalDateTime.now(ORDER_TIME_ZONE);
+    if (orderedAt == null) {
+      orderedAt = now;
     }
+    if (createdAt == null) {
+      createdAt = orderedAt;
+    }
+    if (updatedAt == null) {
+      updatedAt = now;
+    }
+  }
 
-    @PreUpdate
-    void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+  @PreUpdate
+  void onUpdate() {
+    updatedAt = LocalDateTime.now(ORDER_TIME_ZONE);
+  }
 
     public Long getId() { return id; }
     public String getUsername() { return username; }

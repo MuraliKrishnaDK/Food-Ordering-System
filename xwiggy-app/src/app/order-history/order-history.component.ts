@@ -239,8 +239,22 @@ export class OrderHistoryComponent implements OnInit, OnDestroy {
 
   formatDate(dateStr: string): string {
     if (!dateStr) { return ''; }
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-      + ' ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const normalized = dateStr.replace(' ', 'T').replace(/\.\d+/, '');
+    const match = normalized.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (match) {
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const year = +match[1];
+      const month = +match[2];
+      const day = +match[3];
+      const hour = +match[4];
+      const minute = +match[5];
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const h12 = hour % 12 || 12;
+      const mm = minute < 10 ? '0' + minute : String(minute);
+      return monthNames[month - 1] + ' ' + day + ', ' + year + ' '
+        + h12 + ':' + mm + ' ' + ampm + ' ET';
+    }
+    return new Date(dateStr).toLocaleString('en-US', { timeZone: 'America/New_York' }) + ' ET';
   }
 }

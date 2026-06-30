@@ -58,6 +58,10 @@ CREATE TABLE IF NOT EXISTS promo_code (
     expires_on       DATE
 );
 
+INSERT INTO promo_code (code, discount_percent, discount_flat, min_order_amount, active)
+VALUES ('WELCOME10', 10, 0, 0, TRUE)
+ON CONFLICT (code) DO NOTHING;
+
 CREATE TABLE IF NOT EXISTS item_stock (
     item_name VARCHAR(200) PRIMARY KEY,
     in_stock  BOOLEAN NOT NULL DEFAULT TRUE
