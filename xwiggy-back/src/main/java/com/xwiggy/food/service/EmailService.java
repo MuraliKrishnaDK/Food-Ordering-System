@@ -60,22 +60,23 @@ public class EmailService {
       return;
     }
 
-    String subject = "FoodDoor — Order #" + order.getId() + " Confirmed";
+    String subject = "FoodDoor — Order #" + order.getId() + " Placed";
     String text =
         "Hi"
             + (user.getFirstname() != null && !user.getFirstname().isEmpty()
                 ? " " + user.getFirstname()
                 : "")
             + "!\n\n"
-            + "Thanks for your order! Here are the details:\n\n"
+            + "Thanks for your order! We've received it and will confirm shortly.\n\n"
             + "Order ID      : #" + order.getId() + "\n"
             + "Delivery code : " + safeDeliveryCode(order) + "\n"
             + "Total         : $" + String.format("%.2f", order.getTotal()) + "\n\n"
             + "Items:\n"
             + formatOrderItems(order.getItems())
-            + "\nWe'll keep you updated as your order progresses.\n\n"
+            + "\nYou'll receive an email at each step: Confirmed → Preparing → "
+            + "Out for Delivery → Delivered.\n\n"
             + "— FoodDoor";
-    sendEmail(email.trim(), subject, text);
+    sendEmail(email.trim(), subject, text, "order confirmation #" + order.getId());
   }
 
   public void sendOrderStatusUpdate(User user, Order order, Order.Status previousStatus) {
@@ -89,13 +90,13 @@ public class EmailService {
     if (order.getStatus() == previousStatus) {
       return;
     }
-    // PLACED confirmation is handled by sendOrderConfirmation
+    // Order-placed email is handled by sendOrderConfirmation
     if (order.getStatus() == Order.Status.PLACED) {
       return;
     }
 
     String statusLabel = STATUS_LABELS.getOrDefault(order.getStatus(), order.getStatus().name());
-    String subject = "FoodDoor — Order #" + order.getId() + " is " + statusLabel;
+    String subject = "FoodDoor — Order #" + order.getId() + ": " + statusLabel;
     StringBuilder text =
         new StringBuilder()
             .append("Hi")
@@ -104,28 +105,61 @@ public class EmailService {
                     ? " " + user.getFirstname()
                     : "")
             .append("!\n\n")
-            .append("Your order #")
+            .append(statusHeadline(order.getStatus()))
+            .append("\n\n")
+            .append("Order ID      : #")
             .append(order.getId())
-            .append(" is now: ")
+            .append("\n")
+            .append("Status        : ")
             .append(statusLabel)
-            .append(".\n\n")
-            .append("Delivery code: ")
+            .append("\n")
+            .append("Delivery code : ")
             .append(safeDeliveryCode(order))
             .append("\n")
-            .append("Total: $")
+            .append("Total         : $")
             .append(String.format("%.2f", order.getTotal()))
-            .append("\n\n");
+            .append("\n\n")
+            .append(statusDetail(order.getStatus()))
+            .append("\n\n")
+            .append("Track your order anytime in FoodDoor → My Orders.\n\n")
+            .append("— FoodDoor");
 
-    if (order.getStatus() == Order.Status.OUT_FOR_DELIVERY) {
-      text.append("Your food is on the way! Please have your delivery code ready.\n\n");
-    } else if (order.getStatus() == Order.Status.DELIVERED) {
-      text.append("Enjoy your meal! Thanks for ordering with FoodDoor.\n\n");
-    } else {
-      text.append("Track live updates in your FoodDoor order history.\n\n");
+    sendEmail(
+        email.trim(),
+        subject,
+        text.toString(),
+        "status update #" + order.getId() + " → " + statusLabel);
+  }
+
+  private String statusHeadline(Order.Status status) {
+    switch (status) {
+      case CONFIRMED:
+        return "Your order has been confirmed by the restaurant.";
+      case PREPARING:
+        return "Your order is now being prepared.";
+      case OUT_FOR_DELIVERY:
+        return "Your order is out for delivery!";
+      case DELIVERED:
+        return "Your order has been delivered.";
+      default:
+        return "Your order status has been updated.";
     }
-    text.append("— FoodDoor");
+  }
 
-    sendEmail(email.trim(), subject, text.toString());
+  private String statusDetail(Order.Status status) {
+    switch (status) {
+      case CONFIRMED:
+        return "The kitchen has accepted your order and will start preparing it soon.";
+      case PREPARING:
+        return "Our chefs are preparing your food. We'll notify you when it's on the way.";
+      case OUT_FOR_DELIVERY:
+        return "Your food is on the way! Please have delivery code "
+            + "ready for the delivery agent.";
+      case DELIVERED:
+        return "Enjoy your meal! Thanks for ordering with FoodDoor.";
+      default:
+        return "";
+    }
   }
 
   public void sendPasswordResetCode(String toEmail, String code) {
@@ -173,16 +207,31 @@ public class EmailService {
   }
 
   private void sendEmail(String toEmail, String subject, String text) {
-    sendEmail(toEmail, subject, text, false);
+    sendEmail(toEmail, subject, text, false, null);
   }
 
   private void sendEmail(String toEmail, String subject, String text, boolean required) {
+    sendEmail(toEmail, subject, text, required, null);
+  }
+
+  private void sendEmail(String toEmail, String subject, String text, String logContext) {
+    sendEmail(toEmail, subject, text, false, logContext);
+  }
+
+  private void sendEmail(
+      String toEmail, String subject, String text, boolean required, String logContext) {
     if (isBrevoConfigured()) {
       sendViaBrevo(toEmail, subject, text);
+      if (logContext != null) {
+        System.out.println("[FoodDoor] Email sent (" + logContext + ") → " + toEmail);
+      }
       return;
     }
     if (mailSender != null && smtpFromEmail != null && !smtpFromEmail.isEmpty()) {
       sendViaSmtp(toEmail, subject, text);
+      if (logContext != null) {
+        System.out.println("[FoodDoor] Email sent (" + logContext + ") → " + toEmail);
+      }
       return;
     }
     if (required) {
