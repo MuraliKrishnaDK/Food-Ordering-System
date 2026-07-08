@@ -69,8 +69,18 @@ export class RegisterComponent implements OnInit {
     this.model.address = 'Not provided';
     this.model.phone = 0;
     this.http.post<User>(`${environment.apiUrl}/register`, this.model).subscribe(
-      res => { AppComponent.modelUser = res; this.router.navigate(['welcome']); },
-      () => this.toast.error('An error occurred during registration. Please try again.')
+      res => {
+        AppComponent.modelUser = res;
+        sessionStorage.setItem('userData', JSON.stringify(res));
+        this.router.navigate(['welcome']);
+      },
+      err => {
+        const body = err?.error;
+        const msg = body?.message
+          || (Array.isArray(body?.errors) ? body.errors.join(' • ') : null)
+          || 'An error occurred during registration. Please try again.';
+        this.toast.error(msg);
+      }
     );
   }
 }

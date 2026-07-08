@@ -7,10 +7,10 @@ DROP TABLE IF EXISTS app_user;
 
 CREATE TABLE app_user (
     username  VARCHAR(45)  NOT NULL,
-    password  VARCHAR(45)  NOT NULL,
+    password  VARCHAR(64)  NOT NULL,
     firstname VARCHAR(45)  NOT NULL,
     lastname  VARCHAR(45),
-    email     VARCHAR(45),
+    email     VARCHAR(100),
     address   VARCHAR(45)  NOT NULL,
     phone     BIGINT       NOT NULL,
     merchant  BOOLEAN      NOT NULL DEFAULT FALSE,

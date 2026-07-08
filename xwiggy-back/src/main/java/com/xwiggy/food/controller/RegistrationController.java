@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.dao.DataIntegrityViolationException;
+
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +35,22 @@ public class RegistrationController {
                     .collect(Collectors.toList()));
             return ResponseEntity.badRequest().body(errors);
         }
-        userDao.register(user);
-        return ResponseEntity.ok(user);
+        if (userDao.usernameExists(user.getUsername())) {
+            Map<String, Object> errors = new HashMap<>();
+            errors.put("status", false);
+            errors.put("message", "Username already taken");
+            return ResponseEntity.badRequest().body(errors);
+        }
+        try {
+            userDao.register(user);
+            user.setPassword(null);
+            return ResponseEntity.ok(user);
+        } catch (DataIntegrityViolationException e) {
+            Map<String, Object> errors = new HashMap<>();
+            errors.put("status", false);
+            errors.put("message", "Registration failed. Please check your details and try again.");
+            return ResponseEntity.badRequest().body(errors);
+        }
     }
 
     @PostMapping("/checkUserName")
