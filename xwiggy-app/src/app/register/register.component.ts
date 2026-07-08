@@ -75,10 +75,15 @@ export class RegisterComponent implements OnInit {
         this.router.navigate(['welcome']);
       },
       err => {
-        const body = err?.error;
-        const msg = body?.message
-          || (Array.isArray(body?.errors) ? body.errors.join(' • ') : null)
-          || 'An error occurred during registration. Please try again.';
+        const body = err && err.error;
+        let msg = 'An error occurred during registration. Please try again.';
+        if (body) {
+          if (body.message) {
+            msg = body.message;
+          } else if (Array.isArray(body.errors)) {
+            msg = body.errors.join(' • ');
+          }
+        }
         this.toast.error(msg);
       }
     );
